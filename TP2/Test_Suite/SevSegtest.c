@@ -41,8 +41,6 @@ void display_sender(char num[]) {
     /*takes a string of 4 characters, 
     and deciphers into information to be sent to the seven seg display
     function*/
-    // int valid_digits[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    // char valid_chars[] = {E, r};
     int disp_dgts[4][8];
     printf("To 7Seg: %s\n\n", num);
     int true_i = 0;
