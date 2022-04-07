@@ -170,3 +170,34 @@ int hand_present(){
     }
     avg = avg/sample;
     return avg==1;
+}
+
+void open_door() {
+    /* actuates servo to the open position */
+    if (gpioGetServoPulsewidth(Doorservo) < OPEN){
+        for (int i=gpioGetServoPulsewidth(Doorservo); i<=OPEN; i+=10) {
+            gpioServo(Doorservo, i);
+        }
+    } else if (gpioGetServoPulsewidth(Doorservo) > OPEN) {
+        for (int i=gpioGetServoPulsewidth(Doorservo); i>=OPEN; i-=10) {
+            gpioServo(Doorservo, i);
+        }     
+    } else {
+        printf("ERROR: door already open");
+    }
+}
+
+void close_door() {
+    /* actuates servo to the open position */
+    if (gpioGetServoPulsewidth(Doorservo) < CLOSE){
+        for (int i=gpioGetServoPulsewidth(Doorservo); i<=CLOSE; i+=10) {
+            gpioServo(Doorservo, i);
+        }
+    } else if (gpioGetServoPulsewidth(Doorservo) > OPEN) {
+        for (int i=gpioGetServoPulsewidth(Doorservo); i>=CLOSE; i-=10) {
+            gpioServo(Doorservo, i);
+        }     
+    } else {
+        printf("ERROR: door already closed");
+    }
+}

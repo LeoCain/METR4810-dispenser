@@ -11,6 +11,9 @@ Dispensor source code */
 #define step_CCW 0 // Value of direction pin to spin stepper CCW
 #define next_mask 10 // number of steps required to drop the next mask
 
+#define OPEN 1000   // Value of pwm for servo OPEN position
+#define CLOSE 2000  // Value of pwm for servo CLOSE position
+
 // // values of different numbers/characters for seven seg display
 // char zero[] = {0, 0, 0, 1, 0, 0, 0, 1};
 // char one[] = {1, 1, 0, 1, 0, 1, 1, 1};

@@ -77,7 +77,8 @@ int main(){
             DISPENSE_val = gpioRead(IR1);
             // TODO: CHECK COLLECTION TIMER - if too long, display Err2 on SSD
         }
-        // Mask is taken, de-illuminate green LED
+        // Mask is taken, de-illuminate green LED, close door
+        close_door();
         gpioWrite(IRLED, 1);
         printf("Mask has been collected. Remaining stock: %d\n", stock-1-i);
     }
