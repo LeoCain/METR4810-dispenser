@@ -25,6 +25,7 @@ int seg_list[] = {SevSegE, SevSegD, SevSegC, SevSegG, SevSegB, SevSegF, SevSegA,
 int dig_list[] = {SevSegD1, SevSegD2, SevSegD3, SevSegD4};
 
 void deactivate_segments(){
+    /* sets pinmode for each ssd pin, and initialises them as off */
     for (int i=0; i<8; i++){
         gpioSetMode(seg_list[i], PI_OUTPUT);
         gpioWrite(seg_list[i], 1); // deactivate all segs
@@ -159,3 +160,13 @@ void SS_print(char num[]) {
         }
     }
 }
+
+int hand_present(){
+    /* Returns 1 if hand is detected, 0 otherwise */
+    float avg = 0;
+    int sample = 25;
+    for (int i=0; i<sample; i++) {
+        avg += gpioRead(HAND);
+    }
+    avg = avg/sample;
+    return avg==1;

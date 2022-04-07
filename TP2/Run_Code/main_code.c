@@ -27,15 +27,15 @@ void setup(){
 int main(){
     setup();    // set pinmodes and initial states.
     int stock;
-    printf("Please enter the stock of the dispenser: ")
+    printf("Please enter the stock of the dispenser: ");
     scanf("%d", &stock);
     for (int i=0; i<stock; i++) {
         // Wait for hand to be detected:
-        hand_presence = hand_present(gpioRead(HAND));
+        int hand_presence = hand_present();
         while (hand_presence != hand_val) {
-            hand_presence = hand_present(gpioRead(HAND));
+            hand_presence = hand_present();
         }
-        printf("Customer mask request detected...loading mask...\n")
+        printf("Customer mask request detected...loading mask...\n");
         /* A hand has been detected -> begin load process */
 
         // Illuminate IR LEDs and Green LED:
@@ -44,12 +44,12 @@ int main(){
         step_mag(next_mask, step_CCW);
         // TODO: START MASK DROP TIMER HERE
         // Wait for mask to fall down to roller
-        LOAD_val = gpioRead(IR1);
+        int LOAD_val = gpioRead(IR1);
         while (LOAD_val == 1) {
             LOAD_val = gpioRead(IR1);
             // TODO: CHECK MASK DROP TIMER - if too long, display Err0 on SSD
         }
-        printf("Mask loaded...dispensing...\n")
+        printf("Mask loaded...dispensing...\n");
 
         /* Mask is now sitting on rollers - begin dispense process */
 
@@ -66,22 +66,22 @@ int main(){
         }
         // Stop roller motor
         gpioWrite(RollMot, 0);
-        printf("Mask dispensed and ready for collection.\n")
+        printf("Mask dispensed and ready for collection.\n");
 
         /* mask is now waiting to be collected by customer */
 
         // Wait for mask to be taken
         // TODO: START COLLECTION TIMER HERE
-        DISPENSE_val = gpioRead(IR2);
+        int DISPENSE_val = gpioRead(IR2);
         while (DISPENSE_val == 0) {
             DISPENSE_val = gpioRead(IR1);
             // TODO: CHECK COLLECTION TIMER - if too long, display Err2 on SSD
         }
         // Mask is taken, de-illuminate green LED
         gpioWrite(IRLED, 1);
-        printf("Mask has been collected. Remaining stock: %d\n", stock-1-i)
+        printf("Mask has been collected. Remaining stock: %d\n", stock-1-i);
     }
-    printf("*****Stock depleted. Please refill*****")
+    printf("*****Stock depleted. Please refill*****");
     gpioTerminate();
 
 }

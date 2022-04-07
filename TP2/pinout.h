@@ -24,7 +24,7 @@
 #define IR1 24
 #define IR2 23  
 
-#define HandSens 25 // hand detection sensor
+#define HAND 25 // hand detection sensor
 
 #define Doorservo 12 // servo for sliding door [PWM]
 
