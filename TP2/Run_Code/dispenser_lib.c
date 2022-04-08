@@ -201,3 +201,15 @@ void close_door() {
         printf("ERROR: door already closed");
     }
 }
+
+void step_mag(int steps, int direction) {
+    gpioWrite(DirStep, direction);
+    for (int i=0; i<steps; i++) {
+        int curr_level = gpioRead(StepMot);
+        if (curr_level) {
+            gpioWrite(StepMot, 0);
+        } else {
+            gpioWrite(StepMot, 1);
+        }
+    }
+}
