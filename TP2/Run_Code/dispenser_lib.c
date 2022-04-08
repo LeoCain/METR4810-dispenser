@@ -1,3 +1,6 @@
+/*
+Src file for the dispenser library
+*/
 #include "Dispenser_lib.h"
 #include "Parameters.h"
 #include "pinout.h"

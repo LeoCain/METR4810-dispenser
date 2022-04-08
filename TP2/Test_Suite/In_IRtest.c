@@ -1,4 +1,7 @@
-#include "/home/ubuntu/TP2/pinout.h"
+/*
+Test code for reading binary input from IR sensor.
+*/
+#include "../Run_Code/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>

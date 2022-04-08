@@ -1,4 +1,7 @@
-// #include "/home/ubuntu/TP2/pinout.h"
+/*
+src development file just used for testing isolated examples.
+*/
+#include "../Run_Code/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>

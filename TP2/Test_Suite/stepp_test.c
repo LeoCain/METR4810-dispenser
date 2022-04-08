@@ -1,3 +1,7 @@
+/* 
+Test code for the stepper motor. Requires the ____ stepper motor driver.
+Was tested on a NEMA17 stepper motor. Moves the motor 10 steps.
+*/
 #include "../Run_Code/pinout.h"
 #include "../Run_Code/Parameters.h"
 #include <pigpio.h>

@@ -1,4 +1,4 @@
-// header file to describe the function of Rpi pinouts
+// header file to describe the function of Rpi pins
 #ifndef PINOUT
 #define PINOUT
 

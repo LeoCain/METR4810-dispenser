@@ -1,4 +1,8 @@
-#include "../pinout.h"
+/*
+Test code for testing the IR obstacle detection sensor
+*/
+#include "../Run_Code/pinout.h"
+#include "../Run_Code/Parameters.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +15,7 @@ int hand_present(){
         avg += gpioRead(HAND);
     }
     avg = avg/sample;
-    if (avg == 1){
+    if (avg == hand_val){
         return 1;
     } else {
         return 0;

@@ -1,3 +1,7 @@
+""" 
+real-time plotting function used to display the state of
+a specified pin.
+"""
 import pigpio as pp
 from matplotlib import pyplot as plt
 import numpy as np
