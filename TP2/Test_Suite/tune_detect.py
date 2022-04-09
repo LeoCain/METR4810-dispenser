@@ -3,8 +3,7 @@ real-time plotting function used to display the state of
 a specified pin.
 """
 import pigpio as pp
-from matplotlib import pyplot as plt
-import numpy as np
+from matplotlib import pyplot as plt 
 
 # define pin to be tested:
 test_pin = 24   # 24 for IR1, 25 for HAND

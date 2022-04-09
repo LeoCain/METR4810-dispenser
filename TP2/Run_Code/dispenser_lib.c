@@ -209,10 +209,13 @@ void step_mag(int steps, int direction) {
     gpioWrite(DirStep, direction);
     for (int i=0; i<steps; i++) {
         int curr_level = gpioRead(StepMot);
-        if (curr_level) {
+        printf("%d\n", curr_level);
+        if (curr_level == 1) {
             gpioWrite(StepMot, 0);
-        } else {
+        } else if (curr_level == 0) {
             gpioWrite(StepMot, 1);
+        } else {
+            printf("Error, bad StepMot GPIO");
         }
     }
 }

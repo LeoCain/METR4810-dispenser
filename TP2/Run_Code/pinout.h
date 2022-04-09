@@ -4,17 +4,17 @@
 
 // Seven seg pins
 #define SevSegA 9 // segment A of seven seg
-#define SevSegB 6 // segment B of seven seg
-#define SevSegC 17 // segment C of seven seg
-#define SevSegD 3 // segment D of seven seg
-#define SevSegE 2 // segment E of seven seg
-#define SevSegF 11 // segment F of seven seg
-#define SevSegG 27 
-#define SevSegDP 4 // decimal point
-#define SevSegD1 10 // First digit
-#define SevSegD2 0 // second digit
-#define SevSegD3 5 // third digit
-#define SevSegD4 22 // 4th digit   
+#define SevSegB 17 // segment B of seven seg
+#define SevSegC 2 // segment C of seven seg
+#define SevSegD 5 // segment D of seven seg
+#define SevSegE 0 // segment E of seven seg
+#define SevSegF 10 // segment F of seven seg
+#define SevSegG 3 
+#define SevSegDP 6 // decimal point
+#define SevSegD1 11 // First digit
+#define SevSegD2 22 // second digit
+#define SevSegD3 27 // third digit
+#define SevSegD4 4 // 4th digit   
 
 #define RollMot 18 // Roller DC motor
 
