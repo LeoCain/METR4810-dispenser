@@ -22,7 +22,7 @@ void setup(){
     gpioSetMode(Doorservo, PI_OUTPUT);
     gpioSetMode(IRLED, PI_OUTPUT);
     gpioWrite(IRLED, 0);
-    gpioServo(Doorservo, 1000)
+    gpioServo(Doorservo, 500);
 }
 
 int main(){
