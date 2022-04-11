@@ -13,7 +13,7 @@ void step_mag(int steps, int direction) {
     gpioWrite(DirStep, direction);
     for (int i=0; i<steps; i++) {
         clock_t time = clock();
-        while ((clock()-time)< 20000) {}
+        while ((clock()-time)< spin_delay) {}
         int curr_level = gpioRead(StepMot);
         printf("%d\n", curr_level);
         if (curr_level == 1) {
@@ -29,6 +29,9 @@ int main() {
     gpioInitialise();
     gpioSetMode(StepMot, PI_OUTPUT);
     gpioSetMode(DirStep, PI_INPUT);
-    step_mag(10, 1);
+    while(1){
+        step_mag(10, 1);
+    }
+
     gpioTerminate();
 }

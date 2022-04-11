@@ -10,7 +10,10 @@ Dispensor source code */
 #define step_CW 1 // Value of direction pin to spin stepper CW
 #define step_CCW 0 // Value of direction pin to spin stepper CCW
 #define next_mask 10 // number of steps required to drop the next mask
+#define spin_delay 75000 // delay (in ticks) of pause between each step
 
+#define MAX 2500 
+#define MIN 500
 #define OPEN 1000   // Value of pwm for servo OPEN position
 #define CLOSE 2000  // Value of pwm for servo CLOSE position
 

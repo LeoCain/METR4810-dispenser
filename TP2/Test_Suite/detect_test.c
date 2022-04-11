@@ -24,9 +24,9 @@ int hand_present(){
 }
 int main(){
     gpioInitialise();
-    gpioSet(HAND, PI_INPUT);
+    gpioSetMode(HAND, PI_INPUT);
     while (1){
-        printf("%d", hand_present());
+        printf("%d\n", hand_present(HAND));
     }
 
 }
