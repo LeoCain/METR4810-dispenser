@@ -1,7 +1,11 @@
+<<<<<<< HEAD
+#include "pinout.h"
+=======
 /*
 Test code for reading binary input from IR sensor.
 */
 #include "../Run_Code/pinout.h"
+>>>>>>> 69a71d3967265047bb69493dfaf9a1960afb159b
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>
