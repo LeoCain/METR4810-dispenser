@@ -1,24 +1,12 @@
-#include "../pinout.h"
+/*
+Test code for the 5461BS Seven Seg Display.
+*/
+#include "../Run_Code/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-/* define digits and letters for seven seg:
-{E, D, C, G, B, F, A}; */
-// char blank[] = {0, 0, 0, 0, 0, 0, 0};
-// char zero[] = {1, 1, 1, 0, 1, 1, 1};
-// char one[] = {0, 0, 1, 0, 1, 0, 0};
-// char two[] = {1, 1, 0, 1, 1, 0, 1};
-// char three[] = {0, 1, 1, 1, 1, 0, 1};
-// char four[] = {0, 0, 1, 1, 1, 1, 0};
-// char five[] = {0, 1, 1, 1, 0, 1, 1};
-// char six[] = {1, 1, 1, 1, 0, 1, 1};
-// char seven[] = {0, 0, 1, 0, 1, 0, 1};
-// char eight[] = {1, 1, 1, 1, 1, 1, 1};
-// char nine[] = {0, 1, 1, 1, 1, 1, 1};
-// char E[] = {1, 1, 0, 1, 0, 1, 1};
-// char r[] = {1, 0, 0, 1, 0, 0, 0};
 char blank[] = {1, 1, 1, 1, 1, 1, 1, 1};
 char zero[] = {0, 0, 0, 1, 0, 0, 0, 1};
 char one[] = {1, 1, 0, 1, 0, 1, 1, 1};
@@ -161,20 +149,6 @@ void display_sender(char num[]) {
     }
 }
 
-// int sev_disp (char num[]){
-//     /* Takes a string of 4 characters and displays these chars on 
-//     the seven seg */
-//     int to_display[4][7] = display_sender(num);
-//     while(1){
-//         for (int i=0; i<4; i++){
-//             gpioWrite(dig_list[i], 1);
-//             for (int j=0; j<7; j++){
-//                 gpioWrite(seg_list[j], to_display[i][j]);
-//             }
-//         }
-//     }
-// }
-
 // Test code for seven seg
 int main(){
 	gpioInitialise();
@@ -186,7 +160,7 @@ int main(){
         gpioSetMode(dig_list[i], PI_OUTPUT);
         gpioWrite(dig_list[i], 0); //deactivate all digits
     }
-	char num[] = "2669";
+	char num[] = "4201";
     display_sender(num);
     return 1;
 }

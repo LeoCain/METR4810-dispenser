@@ -14,6 +14,7 @@ void step_mag(int steps, int direction); // steps the stepper "steps" times
 
 void open_door(); // Actuates Door Servo to the OPEN position
 
+void close_door(); // Actuates Door Servo to the OPEN position
 #endif
 
 

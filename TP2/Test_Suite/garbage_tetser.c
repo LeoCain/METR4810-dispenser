@@ -1,4 +1,7 @@
-#include "/home/ubuntu/TP2/pinout.h"
+/*
+src development file just used for testing isolated examples.
+*/
+#include "../Run_Code/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -24,6 +27,9 @@ int main(){
     // gpioWrite(SevSegF, 0); // turn on segment 
     // sleep(4);
     // gpioTerminate();
-    char bruh[] = "4.kys";
-    printf("%ld", (sizeof bruh / sizeof bruh[0]) - 1);
+    // char bruh[] = "4.kys";
+    // printf("%ld", (sizeof bruh / sizeof bruh[0]) - 1);
+    for (int i=0; i<=100; i+=10) {
+        printf("%d", i);
+    }
 }

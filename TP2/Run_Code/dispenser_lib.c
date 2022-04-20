@@ -1,3 +1,6 @@
+/*
+Src file for the dispenser library
+*/
 #include "Dispenser_lib.h"
 #include "Parameters.h"
 #include "pinout.h"
@@ -5,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 // values of different numbers/characters for seven seg display
 char zero[] = {0, 0, 0, 1, 0, 0, 0, 1};
@@ -170,3 +174,59 @@ int hand_present(){
     }
     avg = avg/sample;
     return avg==1;
+}
+
+void open_door() {
+    /* actuates servo to the open position */
+    if (gpioGetServoPulsewidth(Doorservo) < OPEN){
+        for (int i=gpioGetServoPulsewidth(Doorservo); i<=OPEN; i+=10) {
+            gpioServo(Doorservo, (unsigned) i);
+            // printf("%u\n", (unsigned) i);
+            gpioDelay(3000);
+        }
+    } else if (gpioGetServoPulsewidth(Doorservo) > OPEN) {
+        for (int i=gpioGetServoPulsewidth(Doorservo); i>=OPEN; i-=10) {
+            gpioServo(Doorservo, (unsigned) i);
+            // printf("%u\n", (unsigned) i);
+            gpioDelay(3000);
+        }     
+    } else {
+        printf("ERROR: door already open");
+    }
+}
+
+void close_door() {
+    /* actuates servo to the open position */
+    if (gpioGetServoPulsewidth(Doorservo) < CLOSE){
+        for (int i=gpioGetServoPulsewidth(Doorservo); i<=CLOSE; i+=10) {
+            gpioServo(Doorservo, (unsigned) i);
+            // printf("%d\n", i);
+            gpioDelay(3000);
+        }
+    } else if (gpioGetServoPulsewidth(Doorservo) > OPEN) {
+        for (int i=gpioGetServoPulsewidth(Doorservo); i>=CLOSE; i-=10) {
+            gpioServo(Doorservo, (unsigned) i);
+            // printf("%d\n", i);
+            gpioDelay(3000);
+        }     
+    } else {
+        printf("ERROR: door already closed");
+    }
+}
+
+void step_mag(int steps, int direction) {
+    gpioWrite(DirStep, direction);
+    for (int i=0; i<steps; i++) {
+        clock_t time = clock();
+        while ((clock()-time)< spin_delay) {}
+        int curr_level = gpioRead(StepMot);
+        printf("%d\n", curr_level);
+        if (curr_level == 1) {
+            gpioWrite(StepMot, 0);
+        } else if (curr_level == 0) {
+            gpioWrite(StepMot, 1);
+        } else {
+            printf("Error, bad StepMot GPIO");
+        }
+    }
+}
