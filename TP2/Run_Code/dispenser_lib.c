@@ -167,13 +167,25 @@ void SS_print(char num[]) {
 
 int hand_present(){
     /* Returns 1 if hand is detected, 0 otherwise */
-    float avg = 0;
-    int sample = 25;
+    float tot = 0;
+    int sample = 50;
+    float avg;
     for (int i=0; i<sample; i++) {
-        avg += gpioRead(HAND);
+        tot += gpioRead(HAND);
     }
-    avg = avg/sample;
-    return avg==1;
+    avg = tot/sample;
+    // if (avg==hand_val) {
+    //     tot=0;
+    //     for (int i=0; i<10; i++) {
+    //         tot += gpioRead(HAND);
+    //     }
+    //     avg = tot/10;
+    // }
+    if (avg == hand_val && avg == gpioRead(HAND)){
+        return 1;
+    } else{
+        return 0;
+    }
 }
 
 void open_door() {
@@ -220,7 +232,7 @@ void step_mag(int steps, int direction) {
         clock_t time = clock();
         while ((clock()-time)< spin_delay) {}
         int curr_level = gpioRead(StepMot);
-        printf("%d\n", curr_level);
+        // printf("%d\n", curr_level);
         if (curr_level == 1) {
             gpioWrite(StepMot, 0);
         } else if (curr_level == 0) {

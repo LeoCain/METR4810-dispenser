@@ -23,8 +23,8 @@
 #define DirStep 15 // stepper motor direction
 
 // IR Phototransistor pins
-#define IR1 24
-#define IR2 23  
+#define IR1 23
+#define IR2 24
 
 #define HAND 25 // hand detection sensor
 

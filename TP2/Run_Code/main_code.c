@@ -33,8 +33,9 @@ int main(){
     for (int i=0; i<stock; i++) {
         // Wait for hand to be detected:
         int hand_presence = hand_present();
-        while (hand_presence != hand_val) {
+        while (!hand_presence) {
             hand_presence = hand_present();
+            printf("%d\n", hand_presence);
         }
         printf("Customer mask request detected...loading mask...\n");
         /* A hand has been detected -> begin load process */
@@ -82,6 +83,7 @@ int main(){
         close_door();
         gpioWrite(IRLED, 1);
         printf("Mask has been collected. Remaining stock: %d\n", stock-1-i);
+        sleep(1);
     }
     printf("*****Stock depleted. Please refill*****");
     gpioTerminate();
