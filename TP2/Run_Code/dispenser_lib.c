@@ -9,6 +9,7 @@ Src file for the dispenser library
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 // values of different numbers/characters for seven seg display
 char zero[] = {0, 0, 0, 1, 0, 0, 0, 1};
@@ -28,6 +29,8 @@ char r[] = {0, 1, 1, 0, 1, 1, 1, 1};
 int seg_list[] = {SevSegE, SevSegD, SevSegC, SevSegG, SevSegB, SevSegF, SevSegA, SevSegDP};
 int dig_list[] = {SevSegD1, SevSegD2, SevSegD3, SevSegD4};
 
+// multithreading flag and mutex lock
+
 void deactivate_segments(){
     /* sets pinmode for each ssd pin, and initialises them as off */
     for (int i=0; i<8; i++){
@@ -40,13 +43,17 @@ void deactivate_segments(){
     }
 }
 
-void SS_print(char num[]) {
-    /*takes a string of 4 characters, 
+void *SS_print(void *no) {
+    /*takes a string of 4-8 characters, 
     and deciphers into information to be sent to the seven seg display
     function*/
+    pthread_mutex_lock(&lock);
+    SSDon = 1;
     deactivate_segments();
     int disp_dgts[4][8];
+    char *num = no;
     printf("To 7Seg: %s\n\n", num);
+    
     int true_i = 0;
     for (int i=0; i<(sizeof &num / sizeof num[0]); i++){
         switch (num[i]){
@@ -141,7 +148,7 @@ void SS_print(char num[]) {
         }
     }
 
-    for (int i=0; i<4; i++){
+    for (int i=0; i<true_i; i++){
         printf("Digit %d: ", i);
         for (int j=0; j<8; j++){
             printf("%d", disp_dgts[i][j]);
@@ -149,20 +156,22 @@ void SS_print(char num[]) {
         printf("\n");
     }
 
-    while(1){
+    while(SSDon){
         clock_t time;
-        for (int i=0; i<4; i++){
+        for (int i=0; i<true_i; i++){
             gpioWrite(dig_list[i], 1);
             for (int j=0; j<8; j++){
                 gpioWrite(seg_list[j], disp_dgts[i][j]);
                 // printf("%d", disp_dgts[i][j]);
             }
             time = clock();
-            while((clock()-time)< 5000){}
+            while((clock()-time)< 5000);
             // printf(" ");
             gpioWrite(dig_list[i], 0);
         }
     }
+    pthread_mutex_unlock(&lock);
+    return NULL;
 }
 
 int hand_present(){

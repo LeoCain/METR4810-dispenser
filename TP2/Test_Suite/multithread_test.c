@@ -129,7 +129,7 @@ void *display_sender(void *no) {
         }
     }
 
-    for (int i=0; i<4; i++){
+    for (int i=0; i<true_i; i++){
         printf("Digit %d: ", i);
         for (int j=0; j<8; j++){
             printf("%d", disp_dgts[i][j]);
@@ -139,7 +139,7 @@ void *display_sender(void *no) {
 
     while(SSDon){
         clock_t time;
-        for (int i=0; i<4; i++){
+        for (int i=0; i<true_i; i++){
             gpioWrite(dig_list[i], 1);
             for (int j=0; j<8; j++){
                 gpioWrite(seg_list[j], disp_dgts[i][j]);
@@ -166,16 +166,18 @@ int main(){
     pthread_t t_id;    // Identify the thread
     printf("printing Err0...\n");
 
-    pthread_create(&t_id, NULL, display_sender, "Err0");    // (ptr to thread id, specific attributes, 
+    pthread_create(&t_id, NULL, display_sender, "10");    // (ptr to thread id, specific attributes, 
                                                             // function to execute on thread, pass var into func)
     printf("SSD updated\n");
     sleep(4);
     printf("turning off SSD, printing Err1\n");
     SSDon = 0;
+    pthread_join(t_id, NULL);
 
     pthread_create(&t_id, NULL, display_sender, "Err1");
     sleep(4);
     SSDon = 0;
+    pthread_join(t_id, NULL);
     printf("SSD is off\n");
     pthread_exit(NULL);
     pthread_mutex_destroy(&lock);

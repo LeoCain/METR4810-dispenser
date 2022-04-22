@@ -6,6 +6,7 @@ Test code for the 5461BS Seven Seg Display.
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 char blank[] = {1, 1, 1, 1, 1, 1, 1, 1};
 char zero[] = {0, 0, 0, 1, 0, 0, 0, 1};
@@ -125,7 +126,7 @@ void display_sender(char num[]) {
         }
     }
 
-    for (int i=0; i<4; i++){
+    for (int i=0; i<true_i; i++){
         printf("Digit %d: ", i);
         for (int j=0; j<8; j++){
             printf("%d", disp_dgts[i][j]);
@@ -135,7 +136,7 @@ void display_sender(char num[]) {
 
     while(1){
         clock_t time;
-        for (int i=0; i<4; i++){
+        for (int i=0; i<true_i; i++){
             gpioWrite(dig_list[i], 1);
             for (int j=0; j<8; j++){
                 gpioWrite(seg_list[j], disp_dgts[i][j]);
@@ -160,7 +161,7 @@ int main(){
         gpioSetMode(dig_list[i], PI_OUTPUT);
         gpioWrite(dig_list[i], 0); //deactivate all digits
     }
-	char num[] = "4201";
+	char num[] = "10";
     display_sender(num);
     return 1;
 }
