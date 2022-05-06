@@ -19,8 +19,8 @@
     * C Program to Get IP Address
     */
 
-// char array[] = "wlan0";
-char array[] = "eth0";
+char array[] = "wlan0";
+// char array[] = "eth0";
 char * get_IP(){
             int n;
     struct ifreq ifr;
@@ -56,8 +56,9 @@ void display_IP(char address[]){
 
         printf("%s\n", token); //printing each token
         pthread_create(&t_id, NULL, SS_print, meme);
-        sleep(2);
+        sleep(3);
         SSDon = 0;
+        gpioDelay(70000);
         pthread_join(t_id, NULL);
         token = strtok(NULL, ".");
 
@@ -80,7 +81,4 @@ int main(){
 
     display_IP(IP);
     gpioTerminate();
-    
-
-
 }

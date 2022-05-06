@@ -179,7 +179,7 @@ int main(){
     SSDon = 0;
     pthread_join(t_id, NULL);
     printf("SSD is off\n");
-    pthread_exit(NULL);
-    pthread_mutex_destroy(&lock);
+    // pthread_exit(NULL);
+    // pthread_mutex_destroy(&lock);
     gpioTerminate();
 }
