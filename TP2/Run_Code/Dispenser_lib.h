@@ -28,7 +28,7 @@ void step(void);
 long unsigned int vibe_til_drop(long unsigned int t_id, char stock[8]);
 long unsigned int feed_til_fed(long unsigned int t_id, char stock[8]);
 long unsigned int wait_for_take(long unsigned int t_id, char stock[8]);
-long unsigned int restock_or_quit(long unsigned int t_id_cmd, char stock[8]);
+int restock_or_quit(long unsigned int t_id_cmd, char stock[8]);
 
 extern int SSDon;
 extern pthread_mutex_t lock;

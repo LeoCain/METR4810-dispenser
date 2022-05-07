@@ -10,6 +10,7 @@ Src file for the dispenser library
 #include <unistd.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <string.h>
 
 // values of different numbers/characters for seven seg display
 char zero[] = {0, 0, 0, 1, 0, 0, 0, 1};
@@ -29,8 +30,7 @@ char r[] = {0, 1, 1, 0, 1, 1, 1, 1};
 int seg_list[] = {SevSegE, SevSegD, SevSegC, SevSegG, SevSegB, SevSegF, SevSegA, SevSegDP};
 int dig_list[] = {SevSegD1, SevSegD2, SevSegD3, SevSegD4};
 
-// multithreading flag and mutex lock
-
+/* Turns off all LEDs on the the SSD */
 void deactivate_segments(){
     /* sets pinmode for each ssd pin, and initialises them as off */
     for (int i=0; i<8; i++){
@@ -43,6 +43,10 @@ void deactivate_segments(){
     }
 }
 
+/**
+ * Displays the given string of chars to the SSD.
+ * only supports up to 4-digit numbers and Err codes.
+ */
 void *SS_print(void *no) {
     /*takes a string of 4-8 characters, 
     and deciphers into information to be sent to the seven seg display
@@ -52,7 +56,7 @@ void *SS_print(void *no) {
     deactivate_segments();
     int disp_dgts[4][8];
     char *num = (char*) no;
-    printf("To 7Seg: %s\n\n", num);
+    // printf("To 7Seg: %s\n\n", num);
     
     int true_i = 0;
     for (size_t i=0; i<(sizeof &num / sizeof num[0]); i++){
@@ -174,8 +178,11 @@ void *SS_print(void *no) {
     return NULL;
 }
 
+/**
+ * Returns 1 if hand is detected, 0 otherwise.
+ * Takes the average of 50 samples to prevent false positives.
+ */
 int hand_present(){
-    /* Returns 1 if hand is detected, 0 otherwise */
     float tot = 0;
     int sample = 50;
     float avg;
@@ -183,19 +190,14 @@ int hand_present(){
         tot += gpioRead(HAND);
     }
     avg = tot/sample;
-    // if (avg==hand_val) {
-    //     tot=0;
-    //     for (int i=0; i<10; i++) {
-    //         tot += gpioRead(HAND);
-    //     }
-    //     avg = tot/10;
-    // }
+
     if (avg == hand_val && avg == gpioRead(HAND)){
         return 1;
     } else{
         return 0;
     }
 }
+
 /* Smoothly actuates servo to the open position */
 void open_door() {
     if (gpioGetServoPulsewidth(Doorservo) < OPEN){
@@ -234,9 +236,7 @@ void close_door() {
     }
 }
 
-/**
- * switches stepper pin to opposite value -> performs 1 step
- */
+/* Switches stepper pin to opposite value -> performs 1 step */
 void step(void) {
 	if (tick++ % 2)
 		gpioWrite(STEP_PIN, 1);
@@ -246,6 +246,7 @@ void step(void) {
     printf("stepped\n");
 }
 
+/* Performs one vibration oscillation - helper function for vibe_til_drop func */
 void vibrate2(void) {
 	if (tick++ % 2) {
 		gpioWrite(DIR_PIN, 1);
@@ -266,9 +267,7 @@ void vibrate2(void) {
 	gpioDelay(vibrate_delay_us);
 }
 
-/**
- * Steps for step_to_turn times to complete one segment turn.
- */
+/* Steps for step_to_turn times to complete one segment turn. */
 void turn(void) {
 	gpioWrite(DIR_PIN, TURN_DIRECTION);
     // printf("%d", step_to_turn);
@@ -278,6 +277,7 @@ void turn(void) {
 	}
     printf("turned\n");
 }
+
 /**
  * Vibrates until the mask falls down. 
  * if timer expires, error code is displayed, but vibration continues
@@ -306,6 +306,7 @@ long unsigned int vibe_til_drop(long unsigned int t_id, char stock[8]){
     return t_id;
 }
 
+/* Helper function for creating SSD or cmd centre threads */
 long unsigned int run_thread(int mode, char num[]){
     if (mode == 0){
         pthread_t thread_id;
@@ -323,6 +324,12 @@ long unsigned int run_thread(int mode, char num[]){
     return -1;
 }
 
+/**
+ * Cmd centre function - takes in commands as an integer:
+ * 0 - reset 
+ * 1 - terminate
+ * TBC
+ */
 void *command_centre(void *dummy){
     pthread_mutex_lock(&lock2);
     int cmd;
@@ -394,6 +401,7 @@ int find_state(int* INPUTS){
         return maxindex + 1;
     }
 }
+
 /**
  * Switches on feed motor until mask is positioned correctly.
  * if mask becomes jammed, Err1 is displayed.
@@ -423,6 +431,10 @@ long unsigned int feed_til_fed(long unsigned int t_id, char stock[8]){
     return t_id;
 }
 
+/**
+ * Waits for custimer to take mask. If timer expires, mask jammed at door:
+ * Err2 is displayed.
+ */
 long unsigned int wait_for_take(long unsigned int t_id, char stock[8]){
     int start = gpioTick(); // Start take timer
 
@@ -446,31 +458,41 @@ long unsigned int wait_for_take(long unsigned int t_id, char stock[8]){
     return t_id;
 }
 
-// long unsigned int restock_or_quit(long unsigned int t_id_cmd, char stock[8]){
-//         if (atoi(stock) <= 0) {
-//         // TODO: add code here to return stepper to home
-//         // Command centre is using scanf, cancel it's thread:
-//         pthread_cancel(t_id_cmd);
-//         // Wait to be restocked
-//         printf("Stock depleted. Please refill\n");
-//         printf("Enter number of masks restocked, or F to exit process: ");
-//         scanf("%s", stock);
-//         int valid_input = 0;
-//         while (!valid_input){
-//             if (strchr(stock, 'F')){
-//                 printf("\nexiting...");
-//                 return 0;
-//             } else if (!(atoi(stock)>=1 || atoi(stock)<=19)){
-//                 printf("\nInvalid input, please try again: ");
-//                 scanf("%s", stock);
-//             } else {
-//                 t_id_cmd = run_thread(1, "4201"); // restart cmd thread
-//                 valid_input = 1;
-//             }
-//         }
-//         return t_id_cmd;
-//     }
-// }
+/**
+ * Decides if a restock is required, if so, the user is asked to quit,
+ * or enter the amount of masks restocked
+ */
+int restock_or_quit(long unsigned int t_id_cmd, char stock[8]){
+    if (atoi(stock) <= 0) {
+        // TODO: add code here to return stepper to home
+        // Command centre is using scanf, cancel it's thread safely:
+        pthread_cancel(t_id_cmd);
+        printf("cmd thread cancelled\n");
+        pthread_mutex_unlock(&lock2);
+        printf("mutex unlocked\n");
+        pthread_join(t_id_cmd, NULL);
+        printf("cmd thread joined\n");
+        // Wait to be restocked
+        printf("Stock depleted. Please refill\n");
+        printf("Enter number of masks restocked, or F to exit process: ");
+        scanf("%s", stock);
+        int valid_input = 0;
+        while (!valid_input){
+            if (strchr(stock, 'F')){
+                printf("\nexiting...");
+                return 0;
+            } else if (!(atoi(stock)>=1 && atoi(stock)<=19)){
+                printf("\nInvalid input, please try again: ");
+                scanf("%s", stock);
+            } else {
+                valid_input = 1;
+            }
+        }
+        return atoi(stock);
+    } else {
+        return atoi(stock);
+    }
+}
 
 // void step_mag(int steps, int direction) {
 //     gpioWrite(DirStep, direction);

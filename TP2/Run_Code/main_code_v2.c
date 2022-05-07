@@ -10,13 +10,12 @@
 #include <string.h>
 /**
  * TODO list:
- * 1. Sometimes doesnt terminate properly
- * 2. cmd thread doesnt seem to restart after restocking
- * 3. currently no means of resetting - cmd thread does almost nothing
- * 4. make restocking stuff into a function
- * 5. send to ssd message prints twice sometimes - prolly just delete
- * 6. do docstrings for functions
-
+ * 1. Sometimes doesnt terminate properly --- SEEMS to be fixed
+ * 2. cmd thread doesnt seem to restart after restocking --- SEEMS to be fixed
+ * 3. sometimes freezes --- SEEMS to be fixed
+ * 4. currently no means of resetting, cmd thread does almost nothing
+ * 5. make restocking code more coherent
+ */
 /* File containing the main run code for the Dispenser project*/
 // initialise global vars
 int SSDon;
@@ -27,6 +26,9 @@ long unsigned int t_id_cmd;
 pthread_mutex_t lock;
 pthread_mutex_t lock2;
 
+/**
+ * Used to safely terminate threads and pigpio
+ */
 void terminate_handler(int dummy) {
     running = 0;
     running2 = 0;
@@ -40,16 +42,25 @@ void terminate_handler(int dummy) {
     pthread_cancel(t_id_cmd);
     pthread_cancel(t_id_SSD);
     printf("Threads finished\n");
+    pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(&lock2);
+    printf("mutex unlocked\n");
+    pthread_mutex_destroy(&lock);
+    pthread_mutex_destroy(&lock2);
+    printf("mutex destroyed\n");
     // Join threads
     pthread_join(t_id_cmd, NULL);
     pthread_join(t_id_SSD, NULL);
     printf("Threads joined\n");
-    pthread_mutex_destroy(&lock);
-    pthread_mutex_destroy(&lock2);
-    printf("Threads destroyed\n");
     gpioTerminate();
     printf("pigpio terminated\n");
+    _Exit(1);
 }
+
+/**
+ * Sets pin modes, initial pin states/positions,
+ * and initialises important variables
+ */
 void setup(){
     gpioInitialise();
 
@@ -83,7 +94,9 @@ void setup(){
 
     // add code here to move stepper to homing position
 }
+
 void dispenser();
+
 int main(void) {
     // Init pigpio, set pinmodes, turn off LEDs, set start pos for servo
     // and move stepper to home position
@@ -96,6 +109,9 @@ int main(void) {
     return 0;
 }
 
+/**
+ * Contains the state machine code for dispensor operation
+ */
 void dispenser(){
     /* Request mask stock */
     char stock[8];
@@ -165,36 +181,20 @@ void dispenser(){
                 gpioDelay(2000000);
                 close_door();
                 INPUTS[3] = 0;
-                /* Check if stock depleted */
-                if (atoi(stock) <= 0) {
-                    // TODO: add code here to return stepper to home
-                    // Command centre is using scanf, cancel it's thread:
-                    pthread_cancel(t_id_cmd);
-                    pthread_join(t_id_cmd, NULL);
-                    // Wait to be restocked
-                    printf("Stock depleted. Please refill\n");
-                    printf("Enter number of masks restocked, or F to exit process: ");
-                    scanf("%s", stock);
-                    printf("you entered: %d\n", atoi(stock));
-                    int valid_input = 0;
-                    while (!valid_input){
-                        if (strchr(stock, 'F')){
-                            printf("\nexiting...");
-                            valid_input = 1;
-                            running2 = 0;
-                        } else if (!(atoi(stock)>=1 && atoi(stock)<=19)){
-                            printf("\nInvalid input, please try again: ");
-                            scanf("%s", stock);
-                        } else {
-                            t_id_cmd = run_thread(1, "4201"); // restart cmd thread
-                            valid_input = 1;
-                        }
-                    }
-                }
+
+                /* Check if stock depleted, if so prompt a refill then update stock */
+                int reload_stock = restock_or_quit(t_id_cmd, stock);
+                snprintf(stock, 8, "%d", reload_stock);
                 
                 // TODO: add code to turn off LED
+                if (reload_stock == 0 ){
+                    running2 = 0;
+                } 
                 if (running2) {
-                    printf("Door closed. Waiting for mask request...\n");
+                    if (!(reload_stock == new_stock)) {
+                        t_id_cmd = run_thread(1, "4201"); // restart cmd thread
+                    }
+                    printf("Waiting for mask request...\n");
                 }
                 break;
         }
@@ -204,3 +204,34 @@ void dispenser(){
     }
     terminate_handler(0);
 }
+
+
+                // /* Check if stock depleted */
+                // if (atoi(stock) <= 0) {
+                //     // TODO: add code here to return stepper to home
+                //     // Command centre is using scanf, cancel it's thread:
+                //     pthread_cancel(t_id_cmd);
+                //     printf("cmd thread cancelled\n");
+                //     pthread_mutex_unlock(&lock2);
+                //     printf("mutex unlocked\n");
+                //     pthread_join(t_id_cmd, NULL);
+                //     printf("cmd thread joined\n");
+                //     // Wait to be restocked
+                //     printf("Stock depleted. Please refill\n");
+                //     printf("Enter number of masks restocked, or F to exit process: ");
+                //     scanf("%s", stock);
+                //     printf("you entered: %d\n", atoi(stock));
+                //     int valid_input = 0;
+                //     while (!valid_input){
+                //         if (strchr(stock, 'F')){
+                //             printf("\nexiting...");
+                //             valid_input = 1;
+                //             running2 = 0;
+                //         } else if (!(atoi(stock)>=1 && atoi(stock)<=19)){
+                //             printf("\nInvalid input, please try again: ");
+                //             scanf("%s", stock);
+                //         } else {
+                //             valid_input = 1;
+                //         }
+                //     }
+                // }
