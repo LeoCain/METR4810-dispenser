@@ -29,7 +29,10 @@ int main(){
     // gpioTerminate();
     // char bruh[] = "4.kys";
     // printf("%ld", (sizeof bruh / sizeof bruh[0]) - 1);
-    for (int i=0; i<=100; i+=10) {
-        printf("%d", i);
-    }
+    // for (int i=0; i<=100; i+=10) {
+    //     printf("%d", i);
+    // }
+    float bruh = 10;
+    float kys = 10;
+    printf("%d", 1 == bruh/kys);
 }

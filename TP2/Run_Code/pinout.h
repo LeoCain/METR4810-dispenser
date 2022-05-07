@@ -19,12 +19,12 @@
 #define RollMot 18 // Roller DC motor
 
 // Stepper motor pins
-#define StepMot 14 // Stepper motor step
-#define DirStep 15 // stepper motor direction
+#define STEP_PIN 14 // Stepper motor step
+#define DIR_PIN 15 // stepper motor direction
 
 // IR Phototransistor pins
 #define IR1 24
-#define IR2 23  
+#define IR2 23
 
 #define HAND 25 // hand detection sensor
 

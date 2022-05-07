@@ -22,13 +22,16 @@ char r[] = {0, 1, 1, 0, 1, 1, 1, 1};
 
 int seg_list[] = {SevSegE, SevSegD, SevSegC, SevSegG, SevSegB, SevSegF, SevSegA, SevSegDP};
 int dig_list[] = {SevSegD1, SevSegD2, SevSegD3, SevSegD4};
-// char num[8];
+
+pthread_mutex_t lock;
 int SSDon;
 
 void *display_sender(void *no) {
     /*takes a string of 4 characters, 
     and deciphers into information to be sent to the seven seg display
     function*/
+    pthread_mutex_lock(&lock);
+    SSDon = 1;
     int disp_dgts[4][8];
     char *num = no;
     printf("To 7Seg: %s\n\n", num);
@@ -126,7 +129,7 @@ void *display_sender(void *no) {
         }
     }
 
-    for (int i=0; i<4; i++){
+    for (int i=0; i<true_i; i++){
         printf("Digit %d: ", i);
         for (int j=0; j<8; j++){
             printf("%d", disp_dgts[i][j]);
@@ -136,7 +139,7 @@ void *display_sender(void *no) {
 
     while(SSDon){
         clock_t time;
-        for (int i=0; i<4; i++){
+        for (int i=0; i<true_i; i++){
             gpioWrite(dig_list[i], 1);
             for (int j=0; j<8; j++){
                 gpioWrite(seg_list[j], disp_dgts[i][j]);
@@ -148,27 +151,35 @@ void *display_sender(void *no) {
             gpioWrite(dig_list[i], 0);
         }
     }
+    pthread_mutex_unlock(&lock);
+    return NULL;
 }
+
 void setup(){
     // num[0] = "0000";
+    gpioInitialise();
     SSDon = 0;
+    pthread_mutex_init(&lock, NULL);
 }
 int main(){
     setup();
     pthread_t t_id;    // Identify the thread
-    printf("printing Err0\n");
-    // (ptr to thread id, specific attributes, 
-    // function to execute on thread, pass var into func)
-    // num[0] = "Err0";
-    pthread_create(&t_id, NULL, display_sender, "Err0");
-    printf("SSD updated");
-    sleep(1);
-    printf("printing Err1\n");
-    // num[0] = "Err0";
+    printf("printing Err0...\n");
+
+    pthread_create(&t_id, NULL, display_sender, "10");    // (ptr to thread id, specific attributes, 
+                                                            // function to execute on thread, pass var into func)
+    printf("SSD updated\n");
+    sleep(4);
+    printf("turning off SSD, printing Err1\n");
     SSDon = 0;
+    pthread_join(t_id, NULL);
+
     pthread_create(&t_id, NULL, display_sender, "Err1");
-    sleep(1);
+    sleep(4);
     SSDon = 0;
+    pthread_join(t_id, NULL);
     printf("SSD is off\n");
-    pthread_exit(NULL);
+    // pthread_exit(NULL);
+    // pthread_mutex_destroy(&lock);
+    gpioTerminate();
 }
