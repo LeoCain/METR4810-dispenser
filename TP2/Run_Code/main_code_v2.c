@@ -9,7 +9,7 @@
 #include <pthread.h>
 #include <string.h>
 /**
- * TODO list:
+ * TODO:
  * 1. Sometimes doesnt terminate properly --- SEEMS to be fixed
  * 2. cmd thread doesnt seem to restart after restocking --- SEEMS to be fixed
  * 3. sometimes freezes --- SEEMS to be fixed

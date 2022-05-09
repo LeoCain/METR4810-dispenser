@@ -349,12 +349,12 @@ void *command_centre(void *dummy){
  */
 int find_state(int* INPUTS){
     // Define each state
-    int ST_1[] = {0, 1, 1, 0};
-    int ST_2[] = {1, 1, 1, 0};
-    int ST_3[] = {0, 0, 1, 0};
-    int ST_4[] = {0, 0, 1, 1};
-    int ST_5[] = {0, 1, 0, 1};
-    int ST_6[] = {0, 1, 1, 1};
+    static const int ST_1[] = {0, 1, 1, 0};
+    static const int ST_2[] = {1, 1, 1, 0};
+    static const int ST_3[] = {0, 0, 1, 0};
+    static const int ST_4[] = {0, 0, 1, 1};
+    static const int ST_5[] = {0, 1, 0, 1};
+    static const int ST_6[] = {0, 1, 1, 1};
     int ST1 = 0; int ST2 = 0; int ST3 = 0; int ST4 = 0; int ST5 = 0; int ST6 = 0;
     for (int i=0; i<4; i++){
         if (i == 0){
