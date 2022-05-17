@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-05-17T12:10:27.152Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36" etag="6D6K7D-NMZupvIaY9qJw" version="17.4.0" type="github">
+<mxfile host="app.diagrams.net" modified="2022-05-17T12:13:06.885Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36" etag="0eFJ5qnlbnOQI5gCMU7g" version="17.4.0" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="1662" dy="754" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -13,14 +13,19 @@
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-20" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-22" target="N2wvxs9mmjQ8SKa3OHZf-26">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-21" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-22" target="N2wvxs9mmjQ8SKa3OHZf-31">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-39" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-22" target="N2wvxs9mmjQ8SKa3OHZf-38">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="230" />
+              <mxPoint x="200" y="230" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-22" value="IR1 HIGH?" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="270" y="120" width="100" height="100" as="geometry" />
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-23" value="Resume state machine loop.&lt;br&gt;(See Logic Flow 1.0.)" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=offPageConnector;rounded=0;size=0.5;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="290" y="420" width="60" height="60" as="geometry" />
+          <mxGeometry x="510" y="340" width="60" height="60" as="geometry" />
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-24" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-26" target="N2wvxs9mmjQ8SKa3OHZf-22">
           <mxGeometry relative="1" as="geometry" />
@@ -43,41 +48,38 @@
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-28" value="Display &quot;Err1&quot; on SSD, notify telemetry that mask is jammed at roller" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.display;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="570" y="130" width="200" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-29" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-31" target="N2wvxs9mmjQ8SKa3OHZf-23">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-30" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-31" target="N2wvxs9mmjQ8SKa3OHZf-33">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-46" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-31" target="N2wvxs9mmjQ8SKa3OHZf-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-31" value="is Err1&lt;br&gt;displayed?" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="270" y="270" width="100" height="100" as="geometry" />
+          <mxGeometry x="320" y="240" width="100" height="100" as="geometry" />
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-32" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-33" target="N2wvxs9mmjQ8SKa3OHZf-35">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-33" value="Clear error &lt;br&gt;from SSD, display stock." style="strokeWidth=2;html=1;shape=mxgraph.flowchart.display;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="430" y="290" width="110" height="60" as="geometry" />
+          <mxGeometry x="480" y="260" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="N2wvxs9mmjQ8SKa3OHZf-23">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="390" y="435" as="targetPoint" />
-            <mxPoint x="695" y="350" as="sourcePoint" />
-            <Array as="points">
-              <mxPoint x="660" y="350" />
-              <mxPoint x="660" y="430" />
-              <mxPoint x="390" y="430" />
-              <mxPoint x="390" y="435" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-35" target="N2wvxs9mmjQ8SKa3OHZf-23">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-35" value="Notify telemetry &lt;br&gt;that jam is cleared" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.display;whiteSpace=wrap;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="590" y="290" width="130" height="60" as="geometry" />
+          <mxGeometry x="640" y="260" width="130" height="60" as="geometry" />
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-36" target="N2wvxs9mmjQ8SKa3OHZf-19">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="N2wvxs9mmjQ8SKa3OHZf-36" value="Turn on feed rollers" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="10" y="140" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-44" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="N2wvxs9mmjQ8SKa3OHZf-38" target="N2wvxs9mmjQ8SKa3OHZf-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="N2wvxs9mmjQ8SKa3OHZf-38" value="Turn off feed rollers" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="150" y="260" width="100" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
