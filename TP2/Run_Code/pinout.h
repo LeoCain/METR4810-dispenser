@@ -21,6 +21,8 @@
 // Stepper motor pins
 #define STEP_PIN 14 // Stepper motor step
 #define DIR_PIN 15 // stepper motor direction
+#define STEP_SLP 8 // detach stepper motor power 1 = not sleep, 0 = sleep
+#define HOME 19 // HIGH when stepper is in home position
 
 // IR Phototransistor pins
 #define IR1 24

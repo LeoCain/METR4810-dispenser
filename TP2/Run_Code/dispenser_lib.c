@@ -179,19 +179,19 @@ void *SS_print(void *no) {
 }
 
 /**
- * Returns 1 if hand is detected, 0 otherwise.
+ * Returns 1 if given pin reads high for a long period, 0 otherwise.
  * Takes the average of 50 samples to prevent false positives.
  */
-int hand_present(){
+int presence_detect(int sensor_pin){
     float tot = 0;
     int sample = 50;
     float avg;
     for (int i=0; i<sample; i++) {
-        tot += gpioRead(HAND);
+        tot += gpioRead(sensor_pin);
     }
     avg = tot/sample;
 
-    if (avg == hand_val && avg == gpioRead(HAND)){
+    if (avg == 1 && avg == gpioRead(sensor_pin)){
         return 1;
     } else{
         return 0;
@@ -286,7 +286,9 @@ long unsigned int vibe_til_drop(long unsigned int t_id, char stock[8]){
     int start = gpioTick(); // Start mask drop timer
     // After half a sec, vibe until mask drops
     int err0 = 0;
-    while (gpioRead(IR1)) {
+    int count = 0;
+    while (gpioRead(IR1) || (count % 2)) {
+        count++;
         vibrate2();
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2000000) && !err0) {
@@ -411,7 +413,8 @@ long unsigned int feed_til_fed(long unsigned int t_id, char stock[8]){
     int start = gpioTick(); // Start feed timer
 
     int err1 = 0;
-    while (!gpioRead(IR1)) {
+    while (!presence_detect(IR1) || presence_detect(IR2)) {
+        printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2500000) && !err1) {
             printf("ERR1: Mask jammed at feed mechanism.\n");
