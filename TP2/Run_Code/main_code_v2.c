@@ -19,7 +19,8 @@
  * 7. open door when IR2 tripped instead?
  * 8. Homing code
  * 9. detach servo code -- DONE
- * 10. Fix flow charts
+ * 10. Fix flow charts -- DONE
+ * 11. first mask pre-loaded
  */
 /* File containing the main run code for the Dispenser project */
 // initialise global vars
@@ -123,7 +124,11 @@ int main(void) {
         home_stepper();
     } else if (reset_mode == 1) {
         gpioWrite(STEP_SLP, 0);
-        printf("Stepper power detached\n");
+        printf("Stepper power detached, press enter to continue\n");
+        fflush(stdout);
+        while(!getchar()){
+            continue;
+        }
     }
 
     // If user sends SIGINT (cntrl-c), catch it, and terminate pigpio properly.
