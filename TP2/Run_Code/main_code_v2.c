@@ -155,7 +155,8 @@ void dispenser(){
 
     /* Begin state machine */
     printf("Waiting for mask request...\n");
-    int INPUTS[] = {presence_detect(HAND), presence_detect(IR1), presence_detect(IR2), 0};
+    // INPUTS = {HAND, DISPENSING?, IR2, DOOR}
+    int INPUTS[] = {presence_detect(HAND), 0, presence_detect(IR2), 0};
     while(running2){
         // printf("find_state = %d\n", find_state(INPUTS));
         int current_state = find_state(INPUTS);
@@ -167,18 +168,24 @@ void dispenser(){
                 // printf("ST1: Request_Wait\n");
                 break;
             case (2):
-                printf("ST2: Dropping_Mask\n");
+                printf("ST2: DROP_FEED\n");
                 // TODO: add code for illuminating green LED
-                
+
+                INPUTS[1] = 1; //set DISPENSE to true
                 turn(); // Rotate to next mask index:
+                gpioWrite(RollMot, 1); //turn on rollers
 
-                // After half a sec, vibe until mask drops
-                gpioDelay(500000);
-                t_id_SSD = vibe_til_drop(t_id_SSD, stock);
+                int start = gpioTick();
+                while(presence_detect(IR2) && ((gpioTick() - start) < 500000)){
+                    continue;
+                }
+                if(!presence_detect(IR2)){
+                    open_door();
+                    INPUTS[3] = 1;
+                }
 
-                // If we reach this stage, the mask is sitting 
-                // on top of rollers, ready to be fed out.
-                gpioDelay(1000);
+                // at this stage, mask could be at IR2, jammed at rollers or
+                // jammed at magazine
                 break;
             case (3):
                 printf("ST3: Open_Door\n");
@@ -189,19 +196,25 @@ void dispenser(){
                 break;
             case (4):
                 printf("ST4: Feed_Mask\n");
-                t_id_SSD = feed_til_fed(t_id_SSD, stock);
-                /** If we reach this stage, the mask is fed out the door,
-                 * ready for collection */
+                t_id_SSD = vibe_til_drop(t_id_SSD, stock);
+                /** If we reach this stage, the mask is fed to IR2 pos*/
                 break;
             case (5):
-                printf("ST5: Take_Mask\n");
-                // Wait for mask to be taken. if not taken, 
-                // Err2 is displayed, mask jammed at door
-                t_id_SSD = wait_for_take(t_id_SSD, stock);
+                printf("ST5: FEED_OUT\n");
+                gpioDelay(1000000);
+                gpioWrite(RollMot, 0);
+                INPUTS[1] = 0; //not DISPENSING anymore
+                // at this stage, mask is hopefully sticking out, ready to take
                 break;
             case (6):
-                printf("ST6: Cleanup and return\n");
+                printf("ST6: TAKE\n");
+                t_id_SSD = wait_for_take(t_id_SSD, stock);
+                INPUTS[1] = 0; //not DISPENSING anymore
+                break;
+
+            case (7):
                 /* Update the remaining stock: */
+                printf("CLOSE_CLEANUP\n");
                 int new_stock = atoi(stock) - 1;
                     // Convert to str and save as stock
                 snprintf(stock, 8, "%d", new_stock);
@@ -213,6 +226,7 @@ void dispenser(){
                 gpioDelay(2000000);
                 close_door();
                 INPUTS[3] = 0;
+                INPUTS[1] = 0; //not DISPENSING anymore
 
                 /* Check if stock depleted, if so prompt a refill then update stock */
                 int reload_stock = restock_or_quit(t_id_cmd, stock);
@@ -231,7 +245,7 @@ void dispenser(){
                 break;
         }
         INPUTS[0] = presence_detect(HAND);
-        INPUTS[1] = presence_detect(IR1);
+        // INPUTS[1] = presence_detect(IR1);
         INPUTS[2] = presence_detect(IR2);
     }
 }

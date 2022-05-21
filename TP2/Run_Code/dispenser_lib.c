@@ -287,12 +287,12 @@ long unsigned int vibe_til_drop(long unsigned int t_id, char stock[8]){
     // After half a sec, vibe until mask drops
     int err0 = 0;
     int count = 0;
-    while (gpioRead(IR1) || (count % 2)) {
+    while (gpioRead(IR2) || (count % 2)) {
         count++;
         vibrate2();
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2000000) && !err0) {
-            printf("ERR0: Mask jammed in magazine.\n");
+            printf("ERR0: Mask jammed in magazine or rollers.\n");
             SSDon = 0;
             pthread_join(t_id, NULL);
             t_id = run_thread(0, "Err0");
@@ -300,7 +300,7 @@ long unsigned int vibe_til_drop(long unsigned int t_id, char stock[8]){
         }
     }
     if (err0) {
-        printf("ERR0 cleared: Mask dropped.\n");
+        printf("ERR0 cleared: Mask dropped and fed.\n");
         SSDon = 0;
         pthread_join(t_id, NULL);
         t_id = run_thread(0, stock);
@@ -351,13 +351,17 @@ void *command_centre(void *dummy){
  */
 int find_state(int* INPUTS){
     // Define each state
-    static const int ST_1[] = {0, 1, 1, 0};
-    static const int ST_2[] = {1, 1, 1, 0};
-    static const int ST_3[] = {0, 0, 1, 0};
-    static const int ST_4[] = {0, 0, 1, 1};
-    static const int ST_5[] = {0, 1, 0, 1};
-    static const int ST_6[] = {0, 1, 1, 1};
-    int ST1 = 0; int ST2 = 0; int ST3 = 0; int ST4 = 0; int ST5 = 0; int ST6 = 0;
+    //IR1 is broken, thus second col all zeroes
+    // state = {HAND, DISPENSING?, IR2, DOOR}
+    static const int ST_1[] = {0, 0, 1, 0}; //WAIT
+    static const int ST_2[] = {1, 0, 1, 0}; //DROP_FEED
+    static const int ST_3[] = {0, 1, 1, 0}; //OPEN_DOOR
+    static const int ST_4[] = {0, 1, 1, 1}; //FEED
+    static const int ST_5[] = {0, 1, 0, 1}; //FEED_OUT
+    static const int ST_6[] = {0, 0, 0, 1}; //TAKE
+    static const int ST_7[] = {0, 0, 1, 1}; //CLOSE_CLEAN
+    int ST1 = 0; int ST2 = 0; int ST3 = 0; int ST4 = 0; int ST5 = 0; int ST6 = 0; int ST7 = 0;
+    
     for (int i=0; i<4; i++){
         if (i == 0){
             // the first digit doesn't matter for ST3-6
@@ -367,6 +371,7 @@ int find_state(int* INPUTS){
             ST4 += 1;
             ST5 += 1;
             ST6 += 1;
+            ST7 += 1;
         } else{
             ST1 += (ST_1[i] == INPUTS[i]);
             ST2 += (ST_2[i] == INPUTS[i]);
@@ -374,13 +379,14 @@ int find_state(int* INPUTS){
             ST4 += (ST_4[i] == INPUTS[i]);
             ST5 += (ST_5[i] == INPUTS[i]);
             ST6 += (ST_6[i] == INPUTS[i]);
+            ST7 += (ST_7[i] == INPUTS[i]);
         }
     }
 
-    int statelist[] = {ST1, ST2, ST3, ST4, ST5, ST6};
+    int statelist[] = {ST1, ST2, ST3, ST4, ST5, ST6, ST7};
     int max = 0;
     int maxindex;
-    for (int i=0; i<6; i++) {
+    for (int i=0; i<7; i++) {
         int state = statelist[i];
         if (state > max){
             max = state;
@@ -445,15 +451,15 @@ long unsigned int wait_for_take(long unsigned int t_id, char stock[8]){
     while (!gpioRead(IR2)) {
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 5000000) && !err2) {
-            printf("ERR2: Mask not taken or jammed at door.\n");
+            printf("ERR1: Mask not taken or jammed at door.\n");
             SSDon = 0;
             pthread_join(t_id, NULL);
-            t_id = run_thread(0, "Err2");
+            t_id = run_thread(0, "Err1");
             err2 = 1;
         }
     }
     if (err2) {
-        printf("ERR2 cleared: Mask taken.\n");
+        printf("Err1 cleared: Mask taken.\n");
         SSDon = 0;
         pthread_join(t_id, NULL);
         t_id = run_thread(0, stock);
