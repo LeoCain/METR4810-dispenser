@@ -1,18 +1,20 @@
 #include <stdio.h>
 #include <pigpio.h>
+#include <unistd.h>
 
 /* Pins */
 #define STEP_PIN			14
 #define DIR_PIN				15
+#define STEP_SLP			8
 /* Stepper */
 #define TOTAL_STEP			200
-#define STEP_DELAY_MS		10
+#define STEP_DELAY_MS		20
 #define VIBRATE_DELAY_MS	10
 #define VIBRATE_STEPS		2 // minimum 2
 /* System */
 #define SEGMENTS			20
 /* Demo */
-#define DEMO_TURNS			1
+#define DEMO_TURNS			100
 #define DEMO_VIBRATE		52 //must be even
 #define TURN_DIRECTION		1
 
@@ -92,13 +94,13 @@ void demo(void)
 		printf("Turn: %d\n", n);
 		turn();
 	}
-	gpioDelay(10000);
-	printf("Demo VIBRATE\n");
-	for (int n = 0; n < DEMO_VIBRATE; n++) {
-		if (n % VIBRATE_DELAY_MS)
-			printf("Vibrate: %d\n", n);
-		vibrate2();
-	}
+	// gpioDelay(10000);
+	// printf("Demo VIBRATE\n");
+	// for (int n = 0; n < DEMO_VIBRATE; n++) {
+	// 	if (n % VIBRATE_DELAY_MS)
+	// 		printf("Vibrate: %d\n", n);
+	// 	vibrate2();
+	// }
 
 	printf("Done\n");
 }
@@ -110,7 +112,9 @@ void init(void)
 {
 	gpioSetMode(STEP_PIN, PI_OUTPUT);
 	gpioSetMode(DIR_PIN, PI_OUTPUT);
+	gpioSetMode(STEP_SLP, PI_OUTPUT);
 	gpioWrite(DIR_PIN, TURN_DIRECTION);
+	gpioWrite(STEP_SLP, 1);
 	tick = 0;
 	step_to_turn = (unsigned)(TOTAL_STEP / SEGMENTS * 2);
 	step_delay_us = STEP_DELAY_MS * 1000;
@@ -121,7 +125,18 @@ int main(void)
 {
 	gpioInitialise();
 	init();
-	demo();
+	turn();
+	// demo();
+	// while(1){
+	// 	printf("unlocked\n");
+	// 	gpioWrite(STEP_SLP, 0);
+	// 	sleep(5);
+	// 	gpioWrite(STEP_SLP, 1);
+	// 	printf("locked\n");
+	// 	gpioDelay(10000);
+	// 	turn();
+	// 	sleep(5);
+	// }
 	return 0;
 }
 
