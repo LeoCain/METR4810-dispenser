@@ -15,6 +15,9 @@
  * 3. sometimes freezes --- SEEMS to be fixed
  * 4. currently no means of resetting, cmd thread does almost nothing
  * 5. make restocking code more coherent
+ * 6. open door when IR2 tripped instead?
+ * 7. Homing code
+ * 8. detach servo code
  */
 /* File containing the main run code for the Dispenser project*/
 // initialise global vars
@@ -73,6 +76,7 @@ void setup(){
     gpioSetMode(HAND, PI_INPUT);
     gpioSetMode(Doorservo, PI_OUTPUT);
     gpioSetMode(IRLED, PI_OUTPUT);
+    
     // set initial state of items
     gpioWrite(RollMot, 0);
     gpioWrite(IRLED, 1);
@@ -151,6 +155,7 @@ void dispenser(){
                 break;
             case (3):
                 printf("ST3: Open_Door\n");
+                // Perhaps change this to open door when second sensor tripped
                 open_door();
                 INPUTS[3] = 1;
                 printf("Door opened\n");

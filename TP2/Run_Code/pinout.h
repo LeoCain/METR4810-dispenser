@@ -7,7 +7,7 @@
 #define SevSegB 17 // segment B of seven seg
 #define SevSegC 2 // segment C of seven seg
 #define SevSegD 5 // segment D of seven seg
-#define SevSegE 0 // segment E of seven seg
+#define SevSegE 0 // segment E of seven seg 
 #define SevSegF 10 // segment F of seven seg
 #define SevSegG 3 
 #define SevSegDP 6 // decimal point
@@ -21,6 +21,8 @@
 // Stepper motor pins
 #define STEP_PIN 14 // Stepper motor step
 #define DIR_PIN 15 // stepper motor direction
+#define STEP_SLP 8 // detach stepper motor power 1 = not sleep, 0 = sleep
+#define HOME // HIGH when stepper is in home position
 
 // IR Phototransistor pins
 #define IR1 24
