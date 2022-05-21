@@ -161,7 +161,7 @@ int main(){
         gpioSetMode(dig_list[i], PI_OUTPUT);
         gpioWrite(dig_list[i], 0); //deactivate all digits
     }
-	char num[] = "10";
+	char num[] = "4810";
     display_sender(num);
     return 1;
 }

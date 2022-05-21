@@ -176,7 +176,7 @@ void dispenser(){
                 gpioWrite(RollMot, 1); //turn on rollers
 
                 int start = gpioTick();
-                while(presence_detect(IR2) && ((gpioTick() - start) < 500000)){
+                while(presence_detect(IR2) && ((gpioTick() - start) < 250000)){
                     continue;
                 }
                 if(!presence_detect(IR2)){
@@ -201,7 +201,7 @@ void dispenser(){
                 break;
             case (5):
                 printf("ST5: FEED_OUT\n");
-                gpioDelay(1000000);
+                gpioDelay(2000000);
                 gpioWrite(RollMot, 0);
                 INPUTS[1] = 0; //not DISPENSING anymore
                 // at this stage, mask is hopefully sticking out, ready to take
@@ -223,7 +223,7 @@ void dispenser(){
                 pthread_join(t_id_SSD, NULL);
                 t_id_SSD = run_thread(0, stock);
                 // wait 2 sec, close door, update door state, turn off green LED
-                gpioDelay(2000000);
+                gpioDelay(3000000);
                 close_door();
                 INPUTS[3] = 0;
                 INPUTS[1] = 0; //not DISPENSING anymore
@@ -242,6 +242,7 @@ void dispenser(){
                     }
                     printf("Waiting for mask request...\n");
                 }
+                sleep(2);
                 break;
         }
         INPUTS[0] = presence_detect(HAND);

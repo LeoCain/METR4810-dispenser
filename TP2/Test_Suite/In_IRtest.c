@@ -42,7 +42,7 @@ int main(){
     gpioSetMode(IR1, PI_INPUT); // set IR transistor pin as input
     gpioSetMode(IR2, PI_INPUT);
     gpioSetMode(IRLED, PI_OUTPUT);
-    gpioWrite(IRLED, 1);
+    gpioPWM(IRLED, 245);
     int IR1_val;
     int IR2_val;
     int i = 0;

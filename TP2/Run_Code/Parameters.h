@@ -25,7 +25,7 @@ Dispensor source code */
 
 #define MAX 2500 
 #define MIN 500
-#define OPEN 1170   // Value of pwm for servo OPEN position
+#define OPEN 800   // Value of pwm for servo OPEN position
 #define CLOSE 1710  // Value of pwm for servo CLOSE position
 
 #endif
