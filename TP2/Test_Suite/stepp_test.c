@@ -2,15 +2,15 @@
 Test code for the stepper motor. Requires the ____ stepper motor driver.
 Was tested on a NEMA17 stepper motor. Moves the motor 10 steps.
 */
-#include "../Run_Code/pinout.h"
-#include "../Run_Code/Parameters.h"
+#include "../Headers/pinout.h"
+#include "../Headers/Parameters.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 void step_mag(int steps, int direction) {
-    gpioWrite(DirStep, direction);
+    gpioWrite(STEP_PIN, direction);
     for (int i=0; i<steps; i++) {
         clock_t time = clock();
         while ((clock()-time)< spin_delay) {}

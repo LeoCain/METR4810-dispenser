@@ -1,6 +1,6 @@
-#include "Dispenser_lib.h"
-#include "Parameters.h"
-#include "pinout.h"
+#include "../Headers/Dispenser_lib.h"
+#include "../Headers/Parameters.h"
+#include "../Headers/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,14 +23,7 @@
  * 11. first mask pre-loaded
  */
 /* File containing the main run code for the Dispenser project */
-// initialise global vars
-int SSDon;
-static volatile int running = 1;
-static volatile int running2 = 1;
-long unsigned int t_id_SSD;
-long unsigned int t_id_cmd;
-pthread_mutex_t lock;
-pthread_mutex_t lock2;
+// see Parameters.h for global vars.
 
 /**
  * Used to safely terminate threads and pigpio - catches SIGINT

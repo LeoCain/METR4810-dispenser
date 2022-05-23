@@ -1,7 +1,7 @@
 /*
 Test code for the 5461BS Seven Seg Display.
 */
-#include "../Run_Code/pinout.h"
+#include "../Headers/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>

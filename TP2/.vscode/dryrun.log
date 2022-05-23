@@ -1,0 +1,8 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory '/home/xspinella/METR4810-dispenser/TP2'
+gcc -Wall -pthread -o RunCodeExec/main2 Run_Code/main_code_v2.c Run_Code/dispenser_lib.c -lpigpio -lrt
+gcc -Wall -pthread -o IP_Display Run_Code/IP_Display.c Run_Code/dispenser_lib.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/detect_test Test_Suite/detect_test.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/In_IRtest.c Test_Suite/detect_test.c -lpigpio -lrt
+make: Leaving directory '/home/xspinella/METR4810-dispenser/TP2'
+ 

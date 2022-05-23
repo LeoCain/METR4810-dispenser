@@ -1,32 +1,36 @@
 /*
 Test code for testing the IR obstacle detection sensor
 */
-#include "../Run_Code/pinout.h"
-#include "../Run_Code/Parameters.h"
+#include "../Headers/pinout.h"
+#include "../Headers/Parameters.h"
+// #include "../Headers/Dispenser_lib.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <pthread.h>
 
-int hand_present(){
-    float avg = 0;
-    int sample = 25;
+int presence_detect(int sensor_pin){
+    float tot = 0;
+    int sample = 50;
+    float avg;
     for (int i=0; i<sample; i++) {
-        avg += gpioRead(HAND);
+        tot += gpioRead(sensor_pin);
     }
-    avg = avg/sample;
-    if (avg == hand_val){
+    avg = tot/sample;
+
+    if (avg == 1 && avg == gpioRead(sensor_pin)){
         return 1;
-    } else {
+    } else{
         return 0;
     }
-
 }
+
 int main(){
     gpioInitialise();
     gpioSetMode(HAND, PI_INPUT);
-    while (!hand_present()){
-        printf("%d", hand_present());
+    while (!presence_detect(HAND)){
+        printf("%d", presence_detect(HAND));
         printf("%d\n", gpioRead(HAND));
     }
 

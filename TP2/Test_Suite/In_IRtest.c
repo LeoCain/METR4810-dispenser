@@ -1,9 +1,9 @@
 /*
 Test code for reading binary input from IR sensor.
 */
-#include "../Run_Code/pinout.h"
+#include "../Headers/pinout.h"
 // #include "../Run_Code/Dispenser_lib.h"
-#include "../Run_Code/Parameters.h"
+#include "../Headers/Parameters.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -42,7 +42,7 @@ int main(){
     gpioSetMode(IR1, PI_INPUT); // set IR transistor pin as input
     gpioSetMode(IR2, PI_INPUT);
     gpioSetMode(IRLED, PI_OUTPUT);
-    gpioPWM(IRLED, 245);
+    gpioPWM(IRLED, 255);
     int IR1_val;
     int IR2_val;
     int i = 0;
