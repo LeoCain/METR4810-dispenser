@@ -1,9 +1,9 @@
 /*
 Src file for the dispenser library
 */
-#include "Dispenser_lib.h"
-#include "Parameters.h"
-#include "pinout.h"
+#include "../Headers/Dispenser_lib.h"
+#include "../Headers/Parameters.h"
+#include "../Headers/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>

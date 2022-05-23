@@ -1,6 +1,6 @@
-#include "Dispenser_lib.h"
-#include "Parameters.h"
-#include "pinout.h"
+#include "../Headers/Dispenser_lib.h"
+#include "../Headers/Parameters.h"
+#include "../Headers/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,8 +13,8 @@ void setup(){
     deactivate_segments();
     gpioSetMode(RollMot, PI_OUTPUT);
     gpioWrite(RollMot, 0);
-    gpioSetMode(StepMot, PI_OUTPUT);
-    gpioSetMode(DirStep, PI_OUTPUT);
+    gpioSetMode(STEP_PIN, PI_OUTPUT);
+    gpioSetMode(DIR_PIN, PI_OUTPUT);
     gpioSetMode(IR1, PI_INPUT);
     gpioSetMode(IR2, PI_INPUT);
     gpioSetMode(HAND, PI_INPUT);

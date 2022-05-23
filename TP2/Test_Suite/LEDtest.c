@@ -1,7 +1,7 @@
 /*
 Test code for blinking an LED
 */
-#include "../Run_Code/pinout.h"
+#include "../Headers/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>

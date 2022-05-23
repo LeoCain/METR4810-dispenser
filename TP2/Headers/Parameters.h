@@ -4,6 +4,7 @@ Dispensor source code */
 #define PARAMETERS
 
 #include "pinout.h"
+#include <pthread.h>
 
 #define hand_val 1  //value of HAND sensor when hand is detected
 
@@ -25,8 +26,17 @@ Dispensor source code */
 
 #define MAX 2500 
 #define MIN 500
-#define OPEN 1170   // Value of pwm for servo OPEN position
-#define CLOSE 1710  // Value of pwm for servo CLOSE position
+#define OPEN 800   // Value of pwm for servo OPEN position
+#define CLOSE 2000 // Value of pwm for servo CLOSE position
+
+// initialise global vars
+int SSDon;
+static volatile int running = 1;
+static volatile int running2 = 1;
+long unsigned int t_id_SSD;
+long unsigned int t_id_cmd;
+pthread_mutex_t lock;
+pthread_mutex_t lock2;
 
 #endif
 

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>  //Header file for sleep(). man 3 sleep for details.
 #include <pthread.h>
-#include "../Run_Code/pinout.h"
-#include "../Run_Code/Parameters.h"
+#include "../Headers/pinout.h"
+#include "../Headers/Parameters.h"
 #include <pigpio.h>
 
 char blank[] = {1, 1, 1, 1, 1, 1, 1, 1};

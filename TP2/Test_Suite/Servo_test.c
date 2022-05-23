@@ -2,9 +2,9 @@
 Test code for spinning an MG-90 (Metal-gear SG-90)
 should spin to max CCW, middle, max CW
 */
-#include "../Run_Code/pinout.h"
-#include "../Run_Code/Dispenser_lib.h"
-#include "../Run_Code/Parameters.h"
+#include "../Headers/pinout.h"
+#include "../Headers/Dispenser_lib.h"
+#include "../Headers/Parameters.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>

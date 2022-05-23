@@ -1,6 +1,6 @@
-#include "Dispenser_lib.h"
-#include "Parameters.h"
-#include "pinout.h"
+#include "../Headers/Dispenser_lib.h"
+#include "../Headers/Parameters.h"
+#include "../Headers/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,16 +21,10 @@
  * 9. detach servo code -- DONE
  * 10. Fix flow charts -- DONE
  * 11. first mask pre-loaded
+ * 12: fix display update
+ * 13: update dual IR branch
  */
 /* File containing the main run code for the Dispenser project */
-// initialise global vars
-int SSDon;
-static volatile int running = 1;
-static volatile int running2 = 1;
-long unsigned int t_id_SSD;
-long unsigned int t_id_cmd;
-pthread_mutex_t lock;
-pthread_mutex_t lock2;
 
 /**
  * Used to safely terminate threads and pigpio - catches SIGINT
@@ -150,9 +144,6 @@ void dispenser(){
     scanf("%s", stock);
     t_id_SSD = run_thread(0, stock);
 
-    /* Launch cmd thread */
-    // t_id_cmd = run_thread(1, "");
-
     /* Begin state machine */
     printf("Waiting for mask request...\n");
     int INPUTS[] = {presence_detect(HAND), presence_detect(IR1), presence_detect(IR2), 0};
@@ -208,7 +199,7 @@ void dispenser(){
                     // Update display
                 SSDon = 0;
                 pthread_join(t_id_SSD, NULL);
-                t_id_SSD = run_thread(0, stock);
+                
                 // wait 2 sec, close door, update door state, turn off green LED
                 gpioDelay(2000000);
                 close_door();
@@ -228,6 +219,8 @@ void dispenser(){
                     }
                     printf("Waiting for mask request...\n");
                 }
+                t_id_SSD = run_thread(0, stock); //fix this
+                sleep(2);
                 break;
         }
         INPUTS[0] = presence_detect(HAND);

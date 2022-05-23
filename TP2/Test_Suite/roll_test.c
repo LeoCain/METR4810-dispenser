@@ -1,7 +1,7 @@
 /*
 Test code for running the DC motor via BJT
 */
-#include "../Run_Code/pinout.h"
+#include "../Headers/pinout.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>
