@@ -16,14 +16,14 @@ IPDisp: Run_Code/IP_Display.c Run_Code/dispenser_lib.c
 
 ### Test Suite ###
 # Hand detection code:
-detect_tst: Test_Suite/detect_test.c
+detect_tst: Test_Suite/detect_test.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/detect_test $^ -lpigpio -lrt
 # IR and IR LED code:
-IR: Test_Suite/In_IRtest.c
+IR: Test_Suite/In_IRtest.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/In_IRtest $^ -lpigpio -lrt
 # multithreading test code:
-mthreading: Test_Suite/multithread_test.c
-	gcc -Wall -pthread -o TestSuiteExec/mt_test $^ -lpigpio -lrt
+# mthreading: Test_Suite/multithread_test.c
+# 	gcc -Wall -pthread -o TestSuiteExec/mt_test $^ -lpigpio -lrt
 # roller motor test code:
 rolltest: Test_Suite/roll_test.c
 	gcc -Wall -pthread -o TestSuiteExec/roll_test $^ -lpigpio -lrt
@@ -31,8 +31,8 @@ rolltest: Test_Suite/roll_test.c
 doorservo: Test_Suite/Servo_test.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/Servo_test $^ -lpigpio -lrt
 # SSD test code:
-SSDtest: Test_Suite/SevSegtest.c
+SSDtest: Test_Suite/SSD_test.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/SevSegtest $^ -lpigpio -lrt
 # stepper test code:
-stepp: Test_Suite/stepper_ben_test.c
-	gcc -Wall -pthread -o TestSuiteExec/benstep $^ -lpigpio -lrt
+stepp: Test_Suite/stepper_test.c Run_Code/dispenser_lib.c
+	gcc -Wall -pthread -o TestSuiteExec/stepp_test $^ -lpigpio -lrt

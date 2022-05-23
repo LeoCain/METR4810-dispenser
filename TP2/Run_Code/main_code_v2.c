@@ -82,8 +82,9 @@ void setup(){
     gpioWrite(STEP_SLP, 1);
     
     // change this to the close position
-    gpioServo(Doorservo, OPEN);
+    gpioServo(Doorservo, CLOSE);
     sleep(1);
+    open_door();
     close_door();
 
     // Initialise multithreading
