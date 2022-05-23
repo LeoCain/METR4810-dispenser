@@ -19,7 +19,7 @@ IPDisp: Run_Code/IP_Display.c Run_Code/dispenser_lib.c
 detect_tst: Test_Suite/detect_test.c
 	gcc -Wall -pthread -o TestSuiteExec/detect_test $^ -lpigpio -lrt
 # IR and IR LED code:
-IR: Test_Suite/detect_test.c
+IR: Test_Suite/In_IRtest.c
 	gcc -Wall -pthread -o TestSuiteExec/In_IRtest $^ -lpigpio -lrt
 # multithreading test code:
 mthreading: Test_Suite/multithread_test.c

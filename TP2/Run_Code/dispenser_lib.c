@@ -475,11 +475,11 @@ int restock_or_quit(long unsigned int t_id_cmd, char stock[8]){
     if (atoi(stock) <= 0) {
         // TODO: add code here to return stepper to home
         // Command centre is using scanf, cancel it's thread safely:
-        pthread_cancel(t_id_cmd);
+        // pthread_cancel(t_id_cmd);
         printf("cmd thread cancelled\n");
-        pthread_mutex_unlock(&lock2);
+        // pthread_mutex_unlock(&lock2);
         printf("mutex unlocked\n");
-        pthread_join(t_id_cmd, NULL);
+        // pthread_join(t_id_cmd, NULL);
         printf("cmd thread joined\n");
         // Wait to be restocked
         printf("Stock depleted. Please refill\n");

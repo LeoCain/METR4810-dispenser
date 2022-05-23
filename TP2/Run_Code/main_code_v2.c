@@ -21,6 +21,8 @@
  * 9. detach servo code -- DONE
  * 10. Fix flow charts -- DONE
  * 11. first mask pre-loaded
+ * 12: fix display update
+ * 13: update dual IR branch
  */
 /* File containing the main run code for the Dispenser project */
 // see Parameters.h for global vars.
@@ -81,8 +83,9 @@ void setup(){
     gpioWrite(STEP_SLP, 1);
     
     // change this to the close position
-    gpioServo(Doorservo, OPEN);
+    gpioServo(Doorservo, CLOSE);
     sleep(1);
+    open_door();
     close_door();
 
     // Initialise multithreading
@@ -143,9 +146,6 @@ void dispenser(){
     scanf("%s", stock);
     t_id_SSD = run_thread(0, stock);
 
-    /* Launch cmd thread */
-    // t_id_cmd = run_thread(1, "");
-
     /* Begin state machine */
     printf("Waiting for mask request...\n");
     // INPUTS = {HAND, DISPENSING?, IR2, DOOR}
@@ -162,7 +162,6 @@ void dispenser(){
                 break;
             case (2):
                 printf("ST2: DROP_FEED\n");
-                // TODO: add code for illuminating green LED
 
                 INPUTS[1] = 1; //set DISPENSE to true
                 turn(); // Rotate to next mask index:
@@ -214,7 +213,6 @@ void dispenser(){
                     // Update display
                 SSDon = 0;
                 pthread_join(t_id_SSD, NULL);
-                t_id_SSD = run_thread(0, stock);
                 // wait 2 sec, close door, update door state, turn off green LED
                 gpioDelay(3000000);
                 close_door();
@@ -235,6 +233,7 @@ void dispenser(){
                     }
                     printf("Waiting for mask request...\n");
                 }
+                t_id_SSD = run_thread(0, stock); // TODO: fix this
                 sleep(2);
                 break;
         }

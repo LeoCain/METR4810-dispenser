@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "parameters.h": "c",
-        "dispenser_lib.h": "c"
+        "dispenser_lib.h": "c",
+        "unistd.h": "c"
     }
 }

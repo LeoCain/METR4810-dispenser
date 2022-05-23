@@ -3,6 +3,11 @@ make: Entering directory '/home/xspinella/METR4810-dispenser/TP2'
 gcc -Wall -pthread -o RunCodeExec/main2 Run_Code/main_code_v2.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o IP_Display Run_Code/IP_Display.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/detect_test Test_Suite/detect_test.c -lpigpio -lrt
-gcc -Wall -pthread -o TestSuiteExec/In_IRtest.c Test_Suite/detect_test.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/In_IRtest Test_Suite/In_IRtest.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/mt_test Test_Suite/multithread_test.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/roll_test Test_Suite/roll_test.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/Servo_test Test_Suite/Servo_test.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/SevSegtest Test_Suite/SevSegtest.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/benstep Test_Suite/stepper_ben_test.c -lpigpio -lrt
 make: Leaving directory '/home/xspinella/METR4810-dispenser/TP2'
  

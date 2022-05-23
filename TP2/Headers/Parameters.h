@@ -14,8 +14,8 @@ Dispensor source code */
 // #define spin_delay 75000 // delay (in ticks) of pause between each step
 /* Stepper */
 #define TOTAL_STEP			200
-#define STEP_DELAY_MS		20
-#define VIBRATE_DELAY_MS	10
+#define STEP_DELAY_MS		30
+#define VIBRATE_DELAY_MS	20
 #define VIBRATE_STEPS		2 // minimum 2
 /* System */
 #define SEGMENTS			20
@@ -27,7 +27,7 @@ Dispensor source code */
 #define MAX 2500 
 #define MIN 500
 #define OPEN 800   // Value of pwm for servo OPEN position
-#define CLOSE 1710  // Value of pwm for servo CLOSE position
+#define CLOSE 2000  // Value of pwm for servo CLOSE position
 
 // initialise global vars
 int SSDon;

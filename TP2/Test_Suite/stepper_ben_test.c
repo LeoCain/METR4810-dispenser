@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <pigpio.h>
 #include <unistd.h>
@@ -8,13 +9,13 @@
 #define STEP_SLP			8
 /* Stepper */
 #define TOTAL_STEP			200
-#define STEP_DELAY_MS		20
-#define VIBRATE_DELAY_MS	10
+#define STEP_DELAY_MS		25
+#define VIBRATE_DELAY_MS	15
 #define VIBRATE_STEPS		2 // minimum 2
 /* System */
 #define SEGMENTS			20
 /* Demo */
-#define DEMO_TURNS			100
+#define DEMO_TURNS			1
 #define DEMO_VIBRATE		52 //must be even
 #define TURN_DIRECTION		1
 
@@ -53,6 +54,7 @@ void vibrate(void)
 	gpioDelay(vibrate_delay_us);
 }
 
+/* Performs one vibration oscillation - helper function for vibe_til_drop func */
 void vibrate2(void) {
 	if (tick++ % 2) {
 		gpioWrite(DIR_PIN, 1);
@@ -94,13 +96,13 @@ void demo(void)
 		printf("Turn: %d\n", n);
 		turn();
 	}
-	// gpioDelay(10000);
-	// printf("Demo VIBRATE\n");
-	// for (int n = 0; n < DEMO_VIBRATE; n++) {
-	// 	if (n % VIBRATE_DELAY_MS)
-	// 		printf("Vibrate: %d\n", n);
-	// 	vibrate2();
-	// }
+	gpioDelay(10000);
+	printf("Demo VIBRATE\n");
+	for (int n = 0; n < DEMO_VIBRATE; n++) {
+		if (n % VIBRATE_DELAY_MS)
+			printf("Vibrate: %d\n", n);
+		vibrate2();
+	}
 
 	printf("Done\n");
 }
@@ -125,7 +127,9 @@ int main(void)
 {
 	gpioInitialise();
 	init();
-	turn();
+	// turn();
+	// vibrate2();
+	demo();
 	// demo();
 	// while(1){
 	// 	printf("unlocked\n");
