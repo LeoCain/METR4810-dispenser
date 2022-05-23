@@ -12,9 +12,17 @@ Test code for the 5461BS Seven Seg Display.
 
 int main() {
     gpioInitialise();
-    t_id_SSD = run_thread(0, "4810");
+    pthread_mutex_lock(&lock);
+    strncpy(SSD_disp, "4810", 9);
+    pthread_mutex_unlock(&lock);
+
+    t_id_SSD = run_thread(1, " ");
+    sleep(3);
+    pthread_mutex_lock(&lock);
+    strncpy(SSD_disp, "Err0", 9);
+    pthread_mutex_unlock(&lock);
     sleep(3);
     SSDon = 0;
-    pthread_join(t_id_SSD, NULL);
+    
     gpioTerminate();
 }

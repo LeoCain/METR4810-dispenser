@@ -22,7 +22,8 @@
 #define STEP_PIN 14 // Stepper motor step
 #define DIR_PIN 15 // stepper motor direction
 #define STEP_SLP 8 // detach stepper motor power 1 = not sleep, 0 = sleep
-#define HOME 19 // HIGH when stepper is in home position
+#define HOME_RD 20 // HIGH when stepper is in home position
+#define HOME_PWR 21
 
 // IR Phototransistor pins
 #define IR1 24
@@ -33,5 +34,7 @@
 #define Doorservo 12 // servo for sliding door [PWM]
 
 #define IRLED 13 // Multiple IR LEDs [PWM]
+
+#define GRNLED 26 //DISPENSE LED
 
 #endif

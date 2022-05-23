@@ -15,13 +15,15 @@ void demo(void)
 		printf("Turn: %d\n", n);
 		turn();
 	}
-	// gpioDelay(10000);
-	// printf("Demo VIBRATE\n");
-	// for (int n = 0; n < DEMO_VIBRATE; n++) {
-	// 	if (n % VIBRATE_DELAY_MS)
-	// 		printf("Vibrate: %d\n", n);
-	// 	vibrate2();
-	// }
+
+	gpioDelay(10000);
+
+	printf("Demo VIBRATE\n");
+	for (int n = 0; n < DEMO_VIBRATE; n++) {
+		if (n % VIBRATE_DELAY_MS)
+			printf("Vibrate: %d\n", n);
+		vibrate2();
+	}
 
 	printf("Done\n");
 }
@@ -46,6 +48,6 @@ int main(void)
 {
 	gpioInitialise();
 	init();
-	turn();
+    demo();
 	return 0;
 }

@@ -4,7 +4,7 @@ Allfiles: Functional Test_Suite
 
 Functional: Main IPDisp
 
-Test_Suite: detect_tst IR mthreading rolltest doorservo SSDtest stepp
+Test_Suite: detect_tst IR rolltest doorservo SSDtest stepp slp_stepp LED
 
 ### Functional code ###
 # Main functional code
@@ -36,3 +36,9 @@ SSDtest: Test_Suite/SSD_test.c Run_Code/dispenser_lib.c
 # stepper test code:
 stepp: Test_Suite/stepper_test.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/stepp_test $^ -lpigpio -lrt
+# stepper sleep code:
+slp_stepp: Test_Suite/detach_stepp.c Run_Code/dispenser_lib.c
+	gcc -Wall -pthread -o TestSuiteExec/detach $^ -lpigpio -lrt
+# LED test code:
+LED: Test_Suite/LEDtest.c
+	gcc -Wall -pthread -o TestSuiteExec/LEDtest $^ -lpigpio -lrt

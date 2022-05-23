@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon May 23 16:02:30 2022
+# Make data base, printed on Mon May 23 21:24:20 2022
 
 # Variables
 
@@ -200,19 +200,18 @@ all:
 #  File does not exist.
 #  File has not been updated.
 
-mthreading: Test_Suite/multithread_test.c
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -Wall -pthread -o TestSuiteExec/mt_test $^ -lpigpio -lrt
-
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-23 16:00:04.154312875
+#  Last modified 2022-05-23 21:23:43.029433753
 #  File has been updated.
 #  Successfully updated.
+
+# Not a target:
+Test_Suite/detach_stepp.c:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 Run_Code/IP_Display.c:
@@ -233,6 +232,12 @@ Run_Code/main_code_v2.c:
 #  Modification time never checked.
 #  File has not been updated.
 
+# Not a target:
+Test_Suite/stepper_test.c:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 IPDisp: Run_Code/IP_Display.c Run_Code/dispenser_lib.c
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -247,10 +252,24 @@ IR: Test_Suite/In_IRtest.c Run_Code/dispenser_lib.c
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -Wall -pthread -o TestSuiteExec/In_IRtest $^ -lpigpio -lrt
 
-Test_Suite: detect_tst IR mthreading rolltest doorservo SSDtest stepp
+Test_Suite: detect_tst IR rolltest doorservo SSDtest stepp slp_stepp LED
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+
+# Not a target:
+Test_Suite/LEDtest.c:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+ 
+#  File has not been updated.
+
+LED: Test_Suite/LEDtest.c
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 44):
+	gcc -Wall -pthread -o TestSuiteExec/LEDtest $^ -lpigpio -lrt
 
 doorservo: Test_Suite/Servo_test.c Run_Code/dispenser_lib.c
 #  Implicit rule search has not been done.
@@ -258,6 +277,13 @@ doorservo: Test_Suite/Servo_test.c Run_Code/dispenser_lib.c
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 32):
 	gcc -Wall -pthread -o TestSuiteExec/Servo_test $^ -lpigpio -lrt
+
+slp_stepp: Test_Suite/detach_stepp.c Run_Code/dispenser_lib.c
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 41):
+	gcc -Wall -pthread -o TestSuiteExec/detach $^ -lpigpio -lrt
 
 # Not a target:
 .DEFAULT:
@@ -271,12 +297,12 @@ Test_Suite/roll_test.c:
 #  Modification time never checked.
 #  File has not been updated.
 
-stepp: Test_Suite/stepper_ben_test.c
+stepp: Test_Suite/stepper_test.c Run_Code/dispenser_lib.c
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 38):
-	gcc -Wall -pthread -o TestSuiteExec/benstep $^ -lpigpio -lrt
+	gcc -Wall -pthread -o TestSuiteExec/stepp_test $^ -lpigpio -lrt
 
 Main: Run_Code/main_code_v2.c Run_Code/dispenser_lib.c
 #  Implicit rule search has not been done.
@@ -298,19 +324,7 @@ Test_Suite/In_IRtest.c:
 #  File has not been updated.
 
 # Not a target:
-Test_Suite/stepper_ben_test.c:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-
-# Not a target:
 Test_Suite/detect_test.c:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-
-# Not a target:
-Test_Suite/multithread_test.c:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -334,20 +348,19 @@ detect_tst: Test_Suite/detect_test.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/detect_test $^ -lpigpio -lrt
 
 # files hash-table stats:
- 
-# Load=26/1024=3%, Rehash=0, Collisions=2/73=3%
+# Load=28/1024=3%, Rehash=0, Collisions=2/80=2%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 36 / storage = 480 B / avg = 13 B
-# current buf: size = 8162 B / used = 480 B / count = 36 / avg = 13 B
+# strcache buffers: 1 (0) / strings = 38 / storage = 496 B / avg = 13 B
+# current buf: size = 8162 B / used = 496 B / count = 38 / avg = 13 B
 
-# strcache performance: lookups = 69 / hit rate = 47%
+# strcache performance: lookups = 75 / hit rate = 49%
 # hash-table stats:
-# Load=36/8192=0%, Rehash=0, Collisions=1/69=1%
-# Finished Make data base on Mon May 23 16:02:30 2022
+# Load=38/8192=0%, Rehash=0, Collisions=1/75=1%
+# Finished Make data base on Mon May 23 21:24:20 2022
 
  
