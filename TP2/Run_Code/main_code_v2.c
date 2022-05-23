@@ -23,6 +23,7 @@
  * 11. first mask pre-loaded
  * 12: fix display update
  * 13: update dual IR branch
+ * 14. rotate 180 for restock BRUH
  */
 /* File containing the main run code for the Dispenser project */
 
@@ -74,12 +75,17 @@ void setup(){
     gpioSetMode(Doorservo, PI_OUTPUT);
     gpioSetMode(IRLED, PI_OUTPUT);
     gpioSetMode(STEP_SLP, PI_OUTPUT);
+    gpioSetMode(GRNLED, PI_OUTPUT);
+    gpioSetMode(HOME_PWR, PI_OUTPUT);
+    gpioSetMode(HOME_RD, PI_INPUT);
 
     // set initial state of items
     gpioWrite(RollMot, 0);
     gpioWrite(IRLED, 1);
     gpioWrite(DIR_PIN, TURN_DIRECTION);
     gpioWrite(STEP_SLP, 1);
+    gpioWrite(GRNLED, 0);
+    gpioWrite(HOME_PWR, 1);
     
     // change this to the close position
     gpioServo(Doorservo, OPEN);
@@ -101,6 +107,9 @@ void setup(){
 void home_stepper(){
     printf("Homing...\n");
     // homing code
+    while(!gpioRead(HOME_RD)) {
+        step();
+    }
     printf("Homed\n");
 }
 
@@ -159,7 +168,8 @@ void dispenser(){
                 break;
             case (2):
                 printf("ST2: Dropping_Mask\n");
-                // TODO: add code for illuminating green LED
+                //turn on DISPENSE LED
+                gpioWrite(GRNLED, 1);
                 
                 turn(); // Rotate to next mask index:
 
@@ -204,12 +214,12 @@ void dispenser(){
                 gpioDelay(2000000);
                 close_door();
                 INPUTS[3] = 0;
+                gpioWrite(GRNLED, 0);
 
                 /* Check if stock depleted, if so prompt a refill then update stock */
                 int reload_stock = restock_or_quit(t_id_cmd, stock);
                 snprintf(stock, 8, "%d", reload_stock);
                 
-                // TODO: add code to turn off LED
                 if (reload_stock == 0 ){
                     running2 = 0;
                 } 
