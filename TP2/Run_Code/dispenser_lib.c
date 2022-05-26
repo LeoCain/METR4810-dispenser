@@ -566,36 +566,83 @@ void wait_for_take(char stock[9]){
  * or enter the amount of masks restocked
  */
 int restock_or_quit(char stock[9]){
-    if (atoi(stock) <= 0) {
-        /* TODO: add code here to return stepper to home(?) */
-        // Wait to be restocked
-        printf("Stock depleted. Please refill\n");
-        printf("Enter number of masks restocked, or F to exit process: ");
-        scanf("%s", stock);
-        int valid_input = 0;
-        while (!valid_input){
-            if (strchr(stock, 'F')){
-                printf("\nexiting...");
-                return 0;
-            } else if (!(atoi(stock)>=1 && atoi(stock)<=19)){
-                printf("\nInvalid input, please try again: ");
-                scanf("%s", stock);
-            } else {
-                valid_input = 1;
-            }
+    /* TODO: add code here to return stepper to home(?) */
+    // Wait to be restocked
+    printf("Stock depleted. Please refill\n");
+    printf("Enter number of masks restocked, or F to exit process: ");
+    scanf("%s", stock);
+    int valid_input = 0;
+    while (!valid_input){
+        if (strchr(stock, 'F')){
+            printf("\nexiting...");
+            return 0;
+        } else if (!(atoi(stock)>=1 && atoi(stock)<=19)){
+            printf("\nInvalid input, please try again: ");
+            scanf("%s", stock);
+        } else {
+            //detach and home:
+            detach_stepper();
+            home_stepper();
+            valid_input = 1;
         }
-        return atoi(stock);
-    } else {
-        return atoi(stock);
     }
+    return atoi(stock);
 }
 
-// Safely updates SSD using mutex lock
+/* Safely updates SSD using mutex lock */
 void update_disp(char stock[9]){
     pthread_mutex_lock(&lock);
     strncpy(SSD_disp, stock, 9);
     pthread_mutex_unlock(&lock);
 }
+
+/**
+ * Used to safely terminate threads and pigpio - catches SIGINT
+ */
+void safe_terminate(int dummy) {
+    if (dummy != 0) {
+        printf("SIGINT detected, ");
+    }
+    printf("finished, terminating...\n");
+    // Ensure loop is exited
+    running2 = 0;
+    // ensure SSD is off
+    SSDon = 0;
+
+    pthread_mutex_destroy(&lock);
+    printf("mutex destroyed\n");
+
+    gpioTerminate();
+    printf("pigpio terminated\n");
+    //exit
+    _Exit(1);
+}
+
+/* Actuates stepper to the home position */ 
+void home_stepper(void){
+    printf("Homing...\n");
+    // homing slowly
+    while(!gpioRead(HOME_RD)) {
+        step();
+        gpioDelay(100000);
+    }
+    printf("Homed\n");
+}
+
+/**
+ * Detaches the stepper, so it can spin freely, then waits for the user
+ * to press enter to reattach the stepper
+ */
+void detach_stepper(void) {
+    gpioWrite(STEP_SLP, 0); // detach stepper
+    // wait for user to signal that they are done:
+    printf("Stepper power detached, press enter to continue\n");
+    getchar();
+    getchar();
+    gpioWrite(STEP_SLP, 1); // Reattach stepper
+    printf("Stepper power reattached\n");
+}
+
 /**
  * Cmd centre function - takes in commands as an integer:
  * 0 - reset 
