@@ -6,14 +6,14 @@ Test code for blinking an LED
 #include <stdio.h>
 #include <unistd.h>
 
-int main(void){
+int main(void) {
     gpioInitialise(); // initialise pigpio
-    gpioSetMode(IRLED, PI_OUTPUT); // set LED pin as an output
-    int i=0;
-    while(i < 7){
-        gpioWrite(IRLED, 1); // turn on LED
+    gpioSetMode(12, PI_OUTPUT); // set LED pin as an output
+    int i = 0;
+    while (i < 100) {
+        gpioWrite(12, 1); // turn on LED
         sleep(1); // wait 1 second
-        gpioWrite(IRLED, 0);
+        // gpioWrite(12, 0);
         sleep(1); // wait 1 second
         i++;
     }

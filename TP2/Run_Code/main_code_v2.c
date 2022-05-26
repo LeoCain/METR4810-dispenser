@@ -10,21 +10,22 @@
 #include <string.h>
 /**
  * TODO:
- * 1. Sometimes doesnt terminate properly --- SEEMS to be fixed
- * 2. cmd thread doesnt seem to restart after restocking --- SEEMS to be fixed
- * 3. sometimes freezes --- SEEMS to be fixed
- * 4. currently no means of resetting, cmd thread does almost nothing -- DONE?
  * 5. make restocking code more coherent
- * 6. more stable IR sensing function
+ * 6. more stable IR sensing function -- CHECK
  * 7. open door when IR2 tripped instead?
  * 8. Homing code
- * 9. detach servo code -- DONE
+ * 9. detach stepper code -- DONE
  * 10. Fix flow charts -- DONE
- * 11. first mask pre-loaded
- * 12: fix display update
- * 13: update dual IR branch
- * 14. rotate 180 for restock BRUH
+ * 11. first mask pre-loaded -- FIX
+ * 12: fix display update -- DONE
+ * 13: update dual IR branch --DONE
+ * 14: make SSD multithreading less shit -- DONE
+ * 15: restock shit how
+ * 16: home -> detach shit
+ * 17: fix vibration slip
+ * 18: auto-rehome function
  */
+
 /* File containing the main run code for the Dispenser project */
 
 /**
@@ -39,19 +40,10 @@ void safe_terminate(int dummy) {
     running2 = 0;
     // ensure SSD is off
     SSDon = 0;
-    // Ensure thread is closed
-    // pthread_cancel(t_id_cmd);
-    pthread_cancel(t_id_SSD);
-    printf("Threads finished\n");
-    pthread_mutex_unlock(&lock);
-    // pthread_mutex_unlock(&lock2);
-    printf("mutex unlocked\n");
+
     pthread_mutex_destroy(&lock);
-    // pthread_mutex_destroy(&lock2);
     printf("mutex destroyed\n");
-    // pthread_join(t_id_cmd, NULL);
-    pthread_join(t_id_SSD, NULL);
-    printf("Threads joined\n");
+
     gpioTerminate();
     printf("pigpio terminated\n");
     //exit
@@ -84,12 +76,14 @@ void setup(){
     gpioWrite(IRLED, 1);
     gpioWrite(DIR_PIN, TURN_DIRECTION);
     gpioWrite(STEP_SLP, 1);
+    gpioWrite(STEP_SLP, 1);
     gpioWrite(GRNLED, 0);
     gpioWrite(HOME_PWR, 1);
     
     // change this to the close position
-    gpioServo(Doorservo, OPEN);
+    gpioServo(Doorservo, CLOSE);
     sleep(1);
+    open_door();
     close_door();
 
     // Initialise multithreading
@@ -120,22 +114,24 @@ int main(void) {
     // and move stepper to home position
     int reset_mode;
     setup();
+
+    // If user sends SIGINT (cntrl-c), catch it, and terminate pigpio properly.
+    signal(SIGINT, safe_terminate);
+
     printf("Enter 0 to home stepper, Enter 1 to detach stepper, anything else will do neither: ");
     scanf("%d", &reset_mode);
     printf("%d Entered\n", reset_mode);
+
     if (reset_mode == 0) {
         home_stepper();
     } else if (reset_mode == 1) {
         gpioWrite(STEP_SLP, 0);
         printf("Stepper power detached, press enter to continue\n");
-        fflush(stdout);
-        while(!getchar()){
-            continue;
-        }
+        getchar();
+        getchar();
+        gpioWrite(STEP_SLP, 1);
     }
 
-    // If user sends SIGINT (cntrl-c), catch it, and terminate pigpio properly.
-    signal(SIGINT, safe_terminate);
     // Execute dispenser process
     // while (running) { dispenser(); }
     dispenser();
@@ -148,13 +144,15 @@ int main(void) {
  */
 void dispenser(){
     /* Request mask stock */
-    char stock[8];
+    char stock[9];
     printf("Please enter the stock of the dispenser: ");
     scanf("%s", stock);
-    t_id_SSD = run_thread(0, stock);
+    update_disp(stock);
+    t_id_SSD = run_thread(1, " ");
 
     /* Begin state machine */
     printf("Waiting for mask request...\n");
+    // INPUTS = {HAND, IR1, IR2, DOOR}
     int INPUTS[] = {presence_detect(HAND), presence_detect(IR1), presence_detect(IR2), 0};
     while(running2){
         // printf("find_state = %d\n", find_state(INPUTS));
@@ -170,27 +168,27 @@ void dispenser(){
                 printf("ST2: Dropping_Mask\n");
                 //turn on DISPENSE LED
                 gpioWrite(GRNLED, 1);
-                
+
+                gpioWrite(RollMot, 1);
                 turn(); // Rotate to next mask index:
 
                 // After half a sec, vibe until mask drops
-                gpioDelay(500000);
-                t_id_SSD = vibe_til_drop(t_id_SSD, stock);
+                // gpioDelay(500000);
+                vibe_til_drop(stock);
 
                 // If we reach this stage, the mask is sitting 
                 // on top of rollers, ready to be fed out.
-                gpioDelay(1000);
+                // gpioDelay(1000);
                 break;
             case (3):
                 printf("ST3: Open_Door\n");
-                // Perhaps change this to open door when second sensor tripped
                 open_door();
                 INPUTS[3] = 1;
                 printf("Door opened\n");
                 break;
             case (4):
                 printf("ST4: Feed_Mask\n");
-                t_id_SSD = feed_til_fed(t_id_SSD, stock);
+                feed_til_fed(stock);
                 /** If we reach this stage, the mask is fed out the door,
                  * ready for collection */
                 break;
@@ -198,18 +196,16 @@ void dispenser(){
                 printf("ST5: Take_Mask\n");
                 // Wait for mask to be taken. if not taken, 
                 // Err2 is displayed, mask jammed at door
-                t_id_SSD = wait_for_take(t_id_SSD, stock);
+                wait_for_take(stock);
                 break;
             case (6):
                 printf("ST6: Cleanup and return\n");
                 /* Update the remaining stock: */
                 int new_stock = atoi(stock) - 1;
                     // Convert to str and save as stock
-                snprintf(stock, 8, "%d", new_stock);
+                snprintf(stock, 9, "%d", new_stock);
                     // Update display
-                SSDon = 0;
-                pthread_join(t_id_SSD, NULL);
-                
+                update_disp(stock);
                 // wait 2 sec, close door, update door state, turn off green LED
                 gpioDelay(2000000);
                 close_door();
@@ -217,19 +213,16 @@ void dispenser(){
                 gpioWrite(GRNLED, 0);
 
                 /* Check if stock depleted, if so prompt a refill then update stock */
-                int reload_stock = restock_or_quit(t_id_cmd, stock);
-                snprintf(stock, 8, "%d", reload_stock);
+                int reload_stock = restock_or_quit(stock);
+                snprintf(stock, 9, "%d", reload_stock);
                 
                 if (reload_stock == 0 ){
                     running2 = 0;
                 } 
                 if (running2) {
-                    if (!(reload_stock == new_stock)) {
-                        // t_id_cmd = run_thread(1, "4201"); // restart cmd thread
-                    }
                     printf("Waiting for mask request...\n");
                 }
-                t_id_SSD = run_thread(0, stock); //fix this
+                update_disp(stock);
                 sleep(2);
                 break;
         }

@@ -178,6 +178,139 @@ void *SS_print(void *no) {
     return NULL;
 }
 
+void *SS_print2(void* _) {
+    /*takes a string of 4-8 characters, 
+    and deciphers into information to be sent to the seven seg display
+    function*/
+    deactivate_segments();
+    SSDon = 1;
+    int disp_dgts[4][8];
+    clock_t time;
+    char num[9];
+    
+    while(SSDon){
+        int true_i = 0;
+        pthread_mutex_lock(&lock);
+        strncpy(num, SSD_disp, 9);
+        pthread_mutex_unlock(&lock);
+        for (size_t i=0; i<(sizeof &num / sizeof num[0]); i++){
+            switch (num[i]){
+                case '0':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = zero[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '1':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = one[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '2':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = two[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '3':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = three[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '4':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = four[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '5':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = five[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '6':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = six[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '7':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = seven[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '8':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = eight[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '9':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = nine[j];
+                    }
+                    true_i++;
+                    break;
+
+                case 'E':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = E[j];
+                    }
+                    true_i++;
+                    break;
+
+                case 'r':
+                    for (int j=0; j<8; j++){
+                        disp_dgts[true_i][j] = r[j];
+                    }
+                    true_i++;
+                    break;
+
+                case '.':
+                    printf("%d", true_i-1);
+                    disp_dgts[true_i-1][7] = 0;
+                    break;
+            }
+        }
+
+        // for (int i=0; i<true_i; i++){
+        //     printf("Digit %d: ", i);
+        //     for (int j=0; j<8; j++){
+        //         printf("%d", disp_dgts[i][j]);
+        //     }
+        //     printf("\n");
+        // }
+
+        
+        for (int i=0; i<true_i; i++){
+            gpioWrite(dig_list[i], 1);
+            for (int j=0; j<8; j++){
+                gpioWrite(seg_list[j], disp_dgts[i][j]);
+                // printf("%d", disp_dgts[i][j]);
+            }
+            time = clock();
+            while((clock()-time)< 5000);
+            // printf(" ");
+            gpioWrite(dig_list[i], 0);
+        }
+        
+    }
+    return NULL;
+}
+
 /**
  * Returns 1 if given pin reads high for a long period, 0 otherwise.
  * Takes the average of 50 samples to prevent false positives.
@@ -243,7 +376,7 @@ void step(void) {
 	else
 		gpioWrite(STEP_PIN, 0);
 	gpioDelay(step_delay_us);
-    printf("stepped\n");
+    // printf("stepped\n");
 }
 
 /* Performs one vibration oscillation - helper function for vibe_til_drop func */
@@ -282,7 +415,7 @@ void turn(void) {
  * Vibrates until the mask falls down. 
  * if timer expires, error code is displayed, but vibration continues
  */
-long unsigned int vibe_til_drop(long unsigned int t_id, char stock[8]){
+void vibe_til_drop(char stock[8]){
     int start = gpioTick(); // Start mask drop timer
     // After half a sec, vibe until mask drops
     int err0 = 0;
@@ -293,19 +426,14 @@ long unsigned int vibe_til_drop(long unsigned int t_id, char stock[8]){
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2000000) && !err0) {
             printf("ERR0: Mask jammed in magazine.\n");
-            SSDon = 0;
-            pthread_join(t_id, NULL);
-            t_id = run_thread(0, "Err0");
+            update_disp("Err0");
             err0 = 1;
         }
     }
     if (err0) {
         printf("ERR0 cleared: Mask dropped.\n");
-        SSDon = 0;
-        pthread_join(t_id, NULL);
-        t_id = run_thread(0, stock);
+        update_disp(stock);
     }
-    return t_id;
 }
 
 /* Helper function for creating SSD or cmd centre threads */
@@ -318,7 +446,8 @@ long unsigned int run_thread(int mode, char num[]){
         return thread_id;
     } else if (mode == 1) {
         pthread_t thread_id;
-        pthread_create(&thread_id, NULL, command_centre, NULL); 
+        pthread_create(&thread_id, NULL, SS_print2, NULL);
+        pthread_detach(thread_id); 
         return thread_id;
     } else {
         printf("invalid mode\n");
@@ -327,30 +456,11 @@ long unsigned int run_thread(int mode, char num[]){
 }
 
 /**
- * Cmd centre function - takes in commands as an integer:
- * 0 - reset 
- * 1 - terminate
- * TBC
- */
-void *command_centre(void *dummy){
-    pthread_mutex_lock(&lock2);
-    int cmd;
-    printf("Welcome to command centre. please enter your command");
-    scanf("%d", &cmd);
-    switch(cmd) {
-        case 0:
-            printf("\n Reset command sent \n");
-            break;
-    }
-    pthread_mutex_unlock(&lock2);
-    return NULL;
-}
-
-/**
  * Finds the state corresponding to the given inputs
  */
 int find_state(int* INPUTS){
     // Define each state
+    // INPUTS = {HAND, IR1, IR2, DOOR}
     static const int ST_1[] = {0, 1, 1, 0};
     static const int ST_2[] = {1, 1, 1, 0};
     static const int ST_3[] = {0, 0, 1, 0};
@@ -408,37 +518,32 @@ int find_state(int* INPUTS){
  * Switches on feed motor until mask is positioned correctly.
  * if mask becomes jammed, Err1 is displayed.
  */
-long unsigned int feed_til_fed(long unsigned int t_id, char stock[8]){
-    gpioWrite(RollMot, 1);  // Switch on feed rollers
+void feed_til_fed(char stock[9]){
+    // gpioWrite(RollMot, 1);  // Switch on feed rollers
     int start = gpioTick(); // Start feed timer
 
     int err1 = 0;
     while (!presence_detect(IR1) || presence_detect(IR2)) {
-        printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
+        // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2500000) && !err1) {
             printf("ERR1: Mask jammed at feed mechanism.\n");
-            SSDon = 0;
-            pthread_join(t_id, NULL);
-            t_id = run_thread(0, "Err1");
+            update_disp("Err1");
             err1 = 1;
         }
     }
     if (err1) {
         printf("ERR1 cleared: Mask fed.\n");
-        SSDon = 0;
-        pthread_join(t_id, NULL);
-        t_id = run_thread(0, stock);
+        update_disp(stock);        
     }
     gpioWrite(RollMot, 0); // Turn off feed motor
-    return t_id;
 }
 
 /**
  * Waits for custimer to take mask. If timer expires, mask jammed at door:
  * Err2 is displayed.
  */
-long unsigned int wait_for_take(long unsigned int t_id, char stock[8]){
+void wait_for_take(char stock[9]){
     int start = gpioTick(); // Start take timer
 
     int err2 = 0;
@@ -446,35 +551,23 @@ long unsigned int wait_for_take(long unsigned int t_id, char stock[8]){
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 5000000) && !err2) {
             printf("ERR2: Mask not taken or jammed at door.\n");
-            SSDon = 0;
-            pthread_join(t_id, NULL);
-            t_id = run_thread(0, "Err2");
+            update_disp("Err2");
             err2 = 1;
         }
     }
     if (err2) {
         printf("ERR2 cleared: Mask taken.\n");
-        SSDon = 0;
-        pthread_join(t_id, NULL);
-        t_id = run_thread(0, stock);
+        update_disp(stock);
     }
-    return t_id;
 }
 
 /**
  * Decides if a restock is required, if so, the user is asked to quit,
  * or enter the amount of masks restocked
  */
-int restock_or_quit(long unsigned int t_id_cmd, char stock[8]){
+int restock_or_quit(char stock[9]){
     if (atoi(stock) <= 0) {
-        // TODO: add code here to return stepper to home
-        // Command centre is using scanf, cancel it's thread safely:
-        pthread_cancel(t_id_cmd);
-        printf("cmd thread cancelled\n");
-        pthread_mutex_unlock(&lock2);
-        printf("mutex unlocked\n");
-        pthread_join(t_id_cmd, NULL);
-        printf("cmd thread joined\n");
+        /* TODO: add code here to return stepper to home(?) */
         // Wait to be restocked
         printf("Stock depleted. Please refill\n");
         printf("Enter number of masks restocked, or F to exit process: ");
@@ -496,6 +589,32 @@ int restock_or_quit(long unsigned int t_id_cmd, char stock[8]){
         return atoi(stock);
     }
 }
+
+// Safely updates SSD using mutex lock
+void update_disp(char stock[9]){
+    pthread_mutex_lock(&lock);
+    strncpy(SSD_disp, stock, 9);
+    pthread_mutex_unlock(&lock);
+}
+/**
+ * Cmd centre function - takes in commands as an integer:
+ * 0 - reset 
+ * 1 - terminate
+ * TBC
+ */
+// void *command_centre(void *dummy){
+//     pthread_mutex_lock(&lock2);
+//     int cmd;
+//     printf("Welcome to command centre. please enter your command");
+//     scanf("%d", &cmd);
+//     switch(cmd) {
+//         case 0:
+//             printf("\n Reset command sent \n");
+//             break;
+//     }
+//     pthread_mutex_unlock(&lock2);
+//     return NULL;
+// }
 
 // void step_mag(int steps, int direction) {
 //     gpioWrite(DirStep, direction);
