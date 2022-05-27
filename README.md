@@ -23,10 +23,11 @@ sudo apt-get install python3-matplotlib
 ## Operation Manual:
 PLEASE NOTE: This software is written for a specific robot with specific mechatronic design aspects. For details on the design, and how it should be used (i.e. how to load/reload masks), please see the robot manual.
 
-# Retrieving Repo:
-If you are downloading this repo onto your own Pi 4, clone it:
+# SSH connection:
+The IP address of the PI will be displayed on startup:
 ```linux
-git clone https://github.com/LeoCain/METR4810-dispenser.git
+ssh xspinella@ip.displayed.on.rpi
+password: xspinella
 ```
 
 # Configuration:
