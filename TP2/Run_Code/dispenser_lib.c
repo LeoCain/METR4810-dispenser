@@ -497,6 +497,13 @@ int find_state(int* INPUTS){
             maxindex = i;
         }
     }
+    
+    printf("INPUTS: [");
+        for (int i = 0; i < 4; i++){
+            printf(" %d", INPUTS[i]);
+        }
+        printf(" ], ");
+
     if (max != 4){
         printf("Error, impossible truth: [");
         for (int i = 0; i < 4; i++){
@@ -505,11 +512,11 @@ int find_state(int* INPUTS){
         printf(" ]\n");
         return -1;
     } else {
-        // printf("INPUTS: [");
-        // for (int i = 0; i < 4; i++){
-        //     printf(" %d", INPUTS[i]);
-        // }
-        // printf(" ], ");
+        printf("INPUTS: [");
+        for (int i = 0; i < 4; i++){
+            printf(" %d", INPUTS[i]);
+        }
+        printf(" ], ");
         return maxindex + 1;
     }
 }
@@ -527,10 +534,11 @@ void feed_til_fed(char stock[9]){
         // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2500000) && !err1) {
-            printf("ERR1: Mask jammed at feed mechanism.\n");
+            printf("ERR1: Mask jammed at feed mechanism: IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
             update_disp("Err1");
             err1 = 1;
         }
+        printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
     }
     if (err1) {
         printf("ERR1 cleared: Mask fed.\n");

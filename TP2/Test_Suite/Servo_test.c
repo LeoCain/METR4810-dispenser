@@ -22,8 +22,8 @@ int main(){
     gpioSetMode(Doorservo, PI_OUTPUT); // set Doorservo pin as output
     int i=0;
     while(i<10){
-        gpioServo(Doorservo, 500);
-        sleep(1);
+        gpioServo(Doorservo, CLOSE);
+        sleep(2);
         open_door();
         // gpioServo(Doorservo, 1000);
         printf("open\n");

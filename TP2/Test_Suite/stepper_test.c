@@ -48,6 +48,9 @@ int main(void)
 {
 	gpioInitialise();
 	init();
+	// turn();
+	//turn();
+	//turn();
     demo();
 	return 0;
 }
