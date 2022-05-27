@@ -20,14 +20,25 @@ matplotlib: please execute the following command in an Ubuntu/Debian - based env
 sudo apt-get install python3-matplotlib
 ```
 
-## Overview:
-The TP2 directory contains all the executables relevant to the project. This includes test code for various components, and the main executable for the complete dispenser project.
+## Overview of File Structure:
+METR4810-dispenser: Contains Draw.io logic flow diagrams, and the TP2 project directory.
+ 
 
-It also contains two directories:
+The TP2 directory contains a makefile, which compiles all of the test code, libraries, and main function software. It also contains the IP_Display executable, which is the only executable in this level as it is run on startup. There are also 5 directories:
 
-Test_Suite is a test suite, which contains test code for all componentry which was implemented on the design.
 
-Run_Code contains source and header files which define the main function of the process, a library which the main process depends on, plus header files to declare pinouts and other useful parameters.
+Headers: Contains header files which define the raspberry pi pinout, and other important variables. It also contains a header file which declares all functions that are defined in the custom library source code.
+
+
+Run_Code: Contains source files which define the main function of the process, and a library which the main process depends on. Also contains an old version of the main code.
+
+RunCodeExec: Contains all the executables relevant to executing the main functionality of the dispenser.
+
+
+Test_Suite: Contains source code for all individual components.
+
+
+TestSuiteExec: Contains executables for the entire test suite.
 
 ## Credits:
 Benjamin Von-Snarski; 45287008
