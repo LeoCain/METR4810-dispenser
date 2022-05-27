@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon May 23 21:24:20 2022
+# Make data base, printed on Fri May 27 10:24:46 2022
 
 # Variables
 
@@ -57,7 +57,7 @@ LESSOPEN = | /usr/bin/lesspipe %s
 # environment
 VSCODE_CWD = /home/xspinella
 # environment
-SSH_CONNECTION = 10.89.122.156 44554 10.89.108.161 22
+SSH_CONNECTION = 10.89.122.156 53724 10.89.108.161 22
 # environment
 PATH = /home/xspinella/.vscode-server/bin/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5/bin/remote-cli:/home/xspinella/.local/bin:/home/xspinella/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 # environment
@@ -67,7 +67,7 @@ UBUNTU_MENUPROXY = 1
 # environment
 VSCODE_LOG_STACK = false
 # environment
-VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-3c7ba9d7-d74a-4732-ad72-1f1266415e09.sock
+VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-550d8fec-67ef-4056-9679-4e20471522e8.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -93,7 +93,7 @@ LESSCLOSE = /usr/bin/lesspipe %s %s
 # environment
 LOGNAME = xspinella
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # automatic
 +F = $(notdir $+)
 # environment
@@ -109,7 +109,7 @@ MAKECMDGOALS := all
 # environment
 SHLVL = 1
 # environment
-XDG_SESSION_ID = 5
+XDG_SESSION_ID = 4
 # environment
 USER = xspinella
 # makefile (from 'Makefile', line 1)
@@ -127,7 +127,7 @@ MAKEFLAGS = pqrR
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_CLIENT = 10.89.122.156 44554 22
+SSH_CLIENT = 10.89.122.156 53724 22
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # environment
@@ -261,7 +261,6 @@ Test_Suite: detect_tst IR rolltest doorservo SSDtest stepp slp_stepp LED
 Test_Suite/LEDtest.c:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
- 
 #  File has not been updated.
 
 LED: Test_Suite/LEDtest.c
@@ -361,6 +360,6 @@ detect_tst: Test_Suite/detect_test.c Run_Code/dispenser_lib.c
 # strcache performance: lookups = 75 / hit rate = 49%
 # hash-table stats:
 # Load=38/8192=0%, Rehash=0, Collisions=1/75=1%
-# Finished Make data base on Mon May 23 21:24:20 2022
+# Finished Make data base on Fri May 27 10:24:46 2022
 
  
