@@ -11,32 +11,16 @@ Test code for reading binary input from IR sensor.
 
 int fuck = 1;
 
-void safe_terminate(int dummy) {
+void safe_terminate_IR(int dummy) {
     fuck = 0;
     // gpioTerminate();
     gpioWrite(IRLED, 0);
     printf("pigpio terminated\n");
 }
 
-// int presence_detect(int sensor_pin){
-//     float tot = 0;
-//     int sample = 50;
-//     float avg;
-//     for (int i=0; i<sample; i++) {
-//         tot += gpioRead(sensor_pin);
-//     }
-//     avg = tot/sample;
-
-//     if (avg == 1 && avg == gpioRead(sensor_pin)){
-//         return 1;
-//     } else{
-//         return 0;
-//     }
-// }
-
 // Test code for displaying readings from IR transistor.
 int main(){
-    signal(SIGINT, safe_terminate);
+    signal(SIGINT, safe_terminate_IR);
 
     gpioInitialise();   // initialise pigpio
     gpioSetMode(IR1, PI_INPUT); // set IR transistor pin as input

@@ -10,45 +10,24 @@
 #include <string.h>
 /**
  * TODO:
- * 5. make restocking code more coherent
+ * 5. make restocking code more coherent -- DONE
  * 6. more stable IR sensing function -- CHECK
  * 7. open door when IR2 tripped instead?
- * 8. Homing code
  * 9. detach stepper code -- DONE
  * 10. Fix flow charts -- DONE
  * 11. first mask pre-loaded -- FIX
  * 12: fix display update -- DONE
  * 13: update dual IR branch --DONE
  * 14: make SSD multithreading less shit -- DONE
- * 15: restock shit how
- * 16: home -> detach shit
+ * 16: home -> detach shit -- CHECK
  * 17: fix vibration slip
- * 18: auto-rehome function
+ * 18: auto-rehome function (?)
+ * 19: detach -> home when restocking -- CHECK
+ * 20: make sure ALL required telemetry logs are there
+ * 21: verify that new restock code works
  */
 
 /* File containing the main run code for the Dispenser project */
-
-/**
- * Used to safely terminate threads and pigpio - catches SIGINT
- */
-void safe_terminate(int dummy) {
-    if (dummy != 0) {
-        printf("SIGINT detected, ");
-    }
-    printf("finished, terminating...\n");
-    // Ensure loop is exited
-    running2 = 0;
-    // ensure SSD is off
-    SSDon = 0;
-
-    pthread_mutex_destroy(&lock);
-    printf("mutex destroyed\n");
-
-    gpioTerminate();
-    printf("pigpio terminated\n");
-    //exit
-    _Exit(1);
-}
 
 /**
  * Sets pin modes, initial pin states/positions,
@@ -97,17 +76,7 @@ void setup(){
 	vibrate_delay_us = VIBRATE_DELAY_MS * 1000;
 }
 
-/* Actuates stepper to the home position */ 
-void home_stepper(){
-    printf("Homing...\n");
-    // homing code
-    while(!gpioRead(HOME_RD)) {
-        step();
-    }
-    printf("Homed\n");
-}
-
-void dispenser();
+int dispenser(void);
 
 int main(void) {
     // Init pigpio, set pinmodes, turn off LEDs, set start pos for servo
@@ -118,22 +87,21 @@ int main(void) {
     // If user sends SIGINT (cntrl-c), catch it, and terminate pigpio properly.
     signal(SIGINT, safe_terminate);
 
-    printf("Enter 0 to home stepper, Enter 1 to detach stepper, anything else will do neither: ");
+    printf("Enter: 0 -> detach then home. 1 -> only home. 2 -> only detach, anything else -> nothing: ");
     scanf("%d", &reset_mode);
     printf("%d Entered\n", reset_mode);
 
     if (reset_mode == 0) {
-        home_stepper();
+        detach_stepper(); // detach, wait till user presses enter, reattach
+        home_stepper(); // Home stepper
     } else if (reset_mode == 1) {
-        gpioWrite(STEP_SLP, 0);
-        printf("Stepper power detached, press enter to continue\n");
-        getchar();
-        getchar();
+        home_stepper(); // Home stepper
+    } else if (reset_mode == 2) {
+        detach_stepper(); // detach, wait till user presses enter, reattach
         gpioWrite(STEP_SLP, 1);
     }
 
     // Execute dispenser process
-    // while (running) { dispenser(); }
     dispenser();
     safe_terminate(0);
     return 0;
@@ -142,7 +110,7 @@ int main(void) {
 /**
  * Contains the state machine code for dispensor operation
  */
-void dispenser(){
+int dispenser(void){
     /* Request mask stock */
     char stock[9];
     printf("Please enter the stock of the dispenser: ");
@@ -204,32 +172,34 @@ void dispenser(){
                 int new_stock = atoi(stock) - 1;
                     // Convert to str and save as stock
                 snprintf(stock, 9, "%d", new_stock);
+                printf("New level of stock: %d", atoi(stock));
                     // Update display
                 update_disp(stock);
                 // wait 2 sec, close door, update door state, turn off green LED
-                gpioDelay(2000000);
+                gpioDelay(1500000);
                 close_door();
                 INPUTS[3] = 0;
                 gpioWrite(GRNLED, 0);
 
                 /* Check if stock depleted, if so prompt a refill then update stock */
-                int reload_stock = restock_or_quit(stock);
-                snprintf(stock, 9, "%d", reload_stock);
-                
-                if (reload_stock == 0 ){
-                    running2 = 0;
-                } 
-                if (running2) {
-                    printf("Waiting for mask request...\n");
+                if (atoi(stock) <= 0) {
+                    int reload_stock = restock_or_quit(stock);
+                    if (reload_stock == 0) {
+                        running2 = 0;
+                        return 0; // CHECK THIS
+                    }
+                    snprintf(stock, 9, "%d", reload_stock);
                 }
                 update_disp(stock);
-                sleep(2);
+                gpioDelay(500000);
+                printf("Waiting for mask request...\n");
                 break;
         }
         INPUTS[0] = presence_detect(HAND);
         INPUTS[1] = presence_detect(IR1);
         INPUTS[2] = presence_detect(IR2);
     }
+    return 1;
 }
 
 
