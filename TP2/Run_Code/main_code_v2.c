@@ -120,7 +120,7 @@ int dispenser(void){
     while(running2){
         // printf("find_state = %d\n", find_state(INPUTS));
         int current_state = find_state(INPUTS);
-        printf("%d", current_state);
+        // printf("%d", current_state);
         switch (current_state){
             case (0):
                 // printf("INVALID STATE\n");
@@ -131,7 +131,7 @@ int dispenser(void){
             case (2):
                 printf("ST2: Dropping_Mask\n");
                 //turn on DISPENSE/IR LEDs
-                gpioWrite(LEDs, 0);
+                gpioWrite(LEDs, 1);
 
                 gpioWrite(RollMot, 1);
                 turn(); // Rotate to next mask index:
@@ -168,7 +168,7 @@ int dispenser(void){
                 int new_stock = atoi(stock) - 1;
                     // Convert to str and save as stock
                 snprintf(stock, 9, "%d", new_stock);
-                printf("New level of stock: %d", atoi(stock));
+                printf("New level of stock: %d\n", atoi(stock));
                     // Update display
                 update_disp(stock);
                 // wait 2 sec, close door, update door state, turn off green LED

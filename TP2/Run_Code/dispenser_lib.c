@@ -420,7 +420,7 @@ void vibe_til_drop(char stock[8]){
     // After half a sec, vibe until mask drops
     int err0 = 0;
     int count = 0;
-    while (gpioRead(IR1) || (count % 2)) {
+    while (presence_detect(IR1) || (count % 2)) {
         count++;
         vibrate2();
         // If timer expires, display error to ssd and terminal
@@ -461,12 +461,12 @@ long unsigned int run_thread(int mode, char num[]){
 int find_state(int* INPUTS){
     // Define each state
     // INPUTS = {HAND, IR1, IR2, DOOR}
-    static const int ST_1[] = {0, 1, 1, 0};
-    static const int ST_2[] = {1, 1, 1, 0};
-    static const int ST_3[] = {0, 0, 1, 0};
-    static const int ST_4[] = {0, 0, 1, 1};
-    static const int ST_5[] = {0, 1, 0, 1};
-    static const int ST_6[] = {0, 1, 1, 1};
+    static const int ST_1[] = {0, 0, 0, 0}; //waiting for mask
+    static const int ST_2[] = {1, 0, 0, 0}; //drop mask
+    static const int ST_3[] = {0, 0, 1, 0}; //open door
+    static const int ST_4[] = {0, 0, 1, 1}; //feed mask
+    static const int ST_5[] = {0, 1, 0, 1}; //take mask
+    static const int ST_6[] = {0, 1, 1, 1}; //close door/restock/cleanup
     int ST1 = 0; int ST2 = 0; int ST3 = 0; int ST4 = 0; int ST5 = 0; int ST6 = 0;
     for (int i=0; i<4; i++){
         if (i == 0){
@@ -498,11 +498,11 @@ int find_state(int* INPUTS){
         }
     }
     
-    printf("INPUTS: [");
-        for (int i = 0; i < 4; i++){
-            printf(" %d", INPUTS[i]);
-        }
-        printf(" ], ");
+    // printf("INPUTS: [");
+    //     for (int i = 0; i < 4; i++){
+    //         printf(" %d", INPUTS[i]);
+    //     }
+    //     printf(" ], ");
 
     if (max != 4){
         printf("Error, impossible truth: [");
@@ -512,11 +512,11 @@ int find_state(int* INPUTS){
         printf(" ]\n");
         return -1;
     } else {
-        printf("INPUTS: [");
-        for (int i = 0; i < 4; i++){
-            printf(" %d", INPUTS[i]);
-        }
-        printf(" ], ");
+        // printf("INPUTS: [");
+        // for (int i = 0; i < 4; i++){
+        //     printf(" %d", INPUTS[i]);
+        // }
+        // printf(" ], ");
         return maxindex + 1;
     }
 }
@@ -525,7 +525,7 @@ int find_state(int* INPUTS){
  * Switches on feed motor until mask is positioned correctly.
  * if mask becomes jammed, Err1 is displayed.
  */
-void feed_til_fed(char stock[9]){
+void feed_til_fed(char stock[9]) {
     // gpioWrite(RollMot, 1);  // Switch on feed rollers
     int start = gpioTick(); // Start feed timer
 
@@ -534,11 +534,11 @@ void feed_til_fed(char stock[9]){
         // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2500000) && !err1) {
-            printf("ERR1: Mask jammed at feed mechanism: IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
+            printf("ERR1: Mask jammed at feed mechanism");
             update_disp("Err1");
             err1 = 1;
         }
-        printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
+    //     printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
     }
     if (err1) {
         printf("ERR1 cleared: Mask fed.\n");
@@ -632,8 +632,9 @@ void home_stepper(void){
     // homing slowly
     while(!gpioRead(HOME_RD)) {
         step();
-        gpioDelay(100000);
+        gpioDelay(7500);
     }
+    step();
     printf("Homed\n");
 }
 

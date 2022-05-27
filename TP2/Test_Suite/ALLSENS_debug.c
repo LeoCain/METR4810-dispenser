@@ -51,7 +51,8 @@ void setup(){
 int main(void) {
     setup();
     signal(SIGINT, safe_terminate);
-    gpioWrite(STEP_SLP, 0);
+    gpioWrite(STEP_SLP, 1);
+    home_stepper();
     while (running2) {
         printf("IR1: %d, IR2 %d, HAND: %d, HOME: %d\n", presence_detect(IR1), presence_detect(IR2), presence_detect(HAND), gpioRead(HOME_RD));
     }
