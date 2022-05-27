@@ -27,15 +27,13 @@
 #define HOME_PWR 23 // FIXME: NOT NEEDED ANYMORE, THIS PIN IS TEMPORARY
 
 // IR Phototransistor pins
-#define IR1 4
-#define IR2 3
+#define IR1 24
+#define IR2 23
 
 #define HAND 26 // hand detection sensor
 
 #define Doorservo 12 // servo for sliding door [PWM]
 
-#define IRLED 13 // Multiple IR LEDs [PWM]
-
-#define GRNLED 13 //DISPENSE LED
+#define LEDs 13 // Multiple IR LEDs and green LED[PWM]
 
 #endif

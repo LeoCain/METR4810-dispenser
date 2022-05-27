@@ -44,19 +44,16 @@ void setup(){
     gpioSetMode(IR2, PI_INPUT);
     gpioSetMode(HAND, PI_INPUT);
     gpioSetMode(Doorservo, PI_OUTPUT);
-    gpioSetMode(IRLED, PI_OUTPUT);
+    gpioSetMode(LEDs, PI_OUTPUT);
     gpioSetMode(STEP_SLP, PI_OUTPUT);
-    gpioSetMode(GRNLED, PI_OUTPUT);
-    gpioSetMode(HOME_PWR, PI_OUTPUT);
     gpioSetMode(HOME_RD, PI_INPUT);
 
     // set initial state of items
     gpioWrite(RollMot, 0);
-    gpioWrite(IRLED, 1);
     gpioWrite(DIR_PIN, TURN_DIRECTION);
     gpioWrite(STEP_SLP, 1);
     gpioWrite(STEP_SLP, 1);
-    gpioWrite(GRNLED, 0);
+    gpioWrite(LEDs, 0);
     gpioWrite(HOME_PWR, 1);
     
     // change this to the close position
@@ -125,6 +122,7 @@ int dispenser(void){
     while(running2){
         // printf("find_state = %d\n", find_state(INPUTS));
         int current_state = find_state(INPUTS);
+        printf("%d", current_state);
         switch (current_state){
             case (0):
                 // printf("INVALID STATE\n");
@@ -134,8 +132,8 @@ int dispenser(void){
                 break;
             case (2):
                 printf("ST2: Dropping_Mask\n");
-                //turn on DISPENSE LED
-                gpioWrite(GRNLED, 1);
+                //turn on DISPENSE/IR LEDs
+                gpioWrite(LEDs, 0);
 
                 gpioWrite(RollMot, 1);
                 turn(); // Rotate to next mask index:
@@ -179,7 +177,7 @@ int dispenser(void){
                 gpioDelay(1500000);
                 close_door();
                 INPUTS[3] = 0;
-                gpioWrite(GRNLED, 0);
+                gpioWrite(LEDs, 0);
 
                 /* Check if stock depleted, if so prompt a refill then update stock */
                 if (atoi(stock) <= 0) {
