@@ -4,7 +4,7 @@ Allfiles: Functional Test_Suite
 
 Functional: Main IPDisp
 
-Test_Suite: detect_tst IR rolltest doorservo SSDtest stepp slp_stepp LED IRdebug
+Test_Suite: detect_tst IR rolltest doorservo SSDtest stepp slp_stepp LED ALL_SENSOR_debug
 
 ### Functional code ###
 # Main functional code
@@ -43,5 +43,5 @@ slp_stepp: Test_Suite/detach_stepp.c Run_Code/dispenser_lib.c
 LED: Test_Suite/LEDtest.c
 	gcc -Wall -pthread -o TestSuiteExec/LEDtest $^ -lpigpio -lrt
 # debugging of IR sensors
-IRdebug: Test_Suite/IR_debug.c Run_Code/dispenser_lib.c
-	gcc -Wall -pthread -o TestSuiteExec/IR_debug $^ -lpigpio -lrt 
+ALL_SENSOR_debug: Test_Suite/ALLSENS_debug.c Run_Code/dispenser_lib.c
+	gcc -Wall -pthread -o TestSuiteExec/ALLSENS_debug $^ -lpigpio -lrt 
