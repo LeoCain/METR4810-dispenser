@@ -26,15 +26,8 @@ int main(){
     gpioInitialise();   // initialise pigpio
     gpioSetMode(IR1, PI_INPUT); // set IR transistor pin as input
     gpioSetMode(IR2, PI_INPUT);
-<<<<<<< HEAD
-    gpioSetPullUpDown(IR1, PI_PUD_DOWN);
-    gpioSetPullUpDown(IR2, PI_PUD_DOWN);
-    gpioSetMode(IRLED, PI_OUTPUT);
-    gpioWrite(IRLED, 1);
-=======
     gpioSetMode(LEDs, PI_OUTPUT);
     gpioWrite(LEDs, 1);
->>>>>>> cc213aebdf67fdc75c3f39cfe78835e27042c860
     int IR1_val;
     int IR2_val;
     int i = 0;
