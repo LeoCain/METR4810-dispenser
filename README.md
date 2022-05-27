@@ -23,14 +23,14 @@ sudo apt-get install python3-matplotlib
 ## Operation Manual:
 PLEASE NOTE: This software is written for a specific robot with specific mechatronic design aspects. For details on the design, and how it should be used (i.e. how to load/reload masks), please see the robot manual.
 
-# SSH connection:
+### SSH connection:
 The IP address of the PI will be displayed on startup:
 ```linux
 ssh xspinella@ip.displayed.on.rpi
 password: xspinella
 ```
 
-# Configuration:
+### Configuration:
 ```linux
 cd METR4810-dispenser/TP2  # Navigate to the TP2 directory:
 make  # Ensure all the executables are compiled up-to-date:
@@ -50,12 +50,12 @@ At this stage, you will be asked to supply input with the following options:
 Following this, the system will ask for the stock level. Enter the number of masks in stock, press enter
 Ensure that the magazine is loaded with masks, and install it.
 
-# Customer Usage:
+### Customer Usage:
 Customers should wave their hand 30 - 40 mm away from the mask request position (indicated on the front panel). The mask will take 5 - 10 seconds to dispense. Once the mask has stopped, and protrudes from the bottom of the dispenser, the customer should pull the mask straight down. After this, the door will close, and the dispenser will wait for the next request. 
 
 The number displayed represents the number of masks remaining in stock. If the display shows an Err, and the Err does not clear in 10 - 20 seconds, the technician should be called.
 
-# Troubleshooting:
+### Troubleshooting:
 If the seven segment display on the front displays an error, refer to the lid, or below for a description:
 
 *Err0*: Mask is jammed between magazine and rollers.
@@ -70,7 +70,7 @@ Other important information:
 
 *The green LED*: This should illuminate when a mask is requested. If it does not, this means that the IR LEDs are not illuminated, and the system will not function correctly.
 
-# Restocking:
+### Restocking:
 If the seven segment display shows 0, there are no masks left in stock. The remote station will require you to signify whether you would like to re-stock, or quit the process.
 
 If you choose to restock:
