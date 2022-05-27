@@ -52,9 +52,7 @@ void setup(){
     gpioWrite(RollMot, 0);
     gpioWrite(DIR_PIN, TURN_DIRECTION);
     gpioWrite(STEP_SLP, 1);
-    gpioWrite(STEP_SLP, 1);
     gpioWrite(LEDs, 0);
-    gpioWrite(HOME_PWR, 1);
     
     // change this to the close position
     gpioServo(Doorservo, CLOSE);
