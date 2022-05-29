@@ -10,12 +10,12 @@ Dispensor source code */
 #define hand_val            1  //value of HAND sensor when hand is detected
 
 /* IR break sensors */
-#define LED_BRIGHTNESS      245
+#define LED_BRIGHTNESS      220
 
 /* Stepper */
 #define TOTAL_STEP		    200
-#define STEP_DELAY_MS		20
-#define VIBRATE_DELAY_MS	20
+#define STEP_DELAY_MS		40
+#define VIBRATE_DELAY_MS	35
 #define VIBRATE_STEPS		2 // minimum 2
 #define SEGMENTS		    20  // Number of segments in the magazine
 

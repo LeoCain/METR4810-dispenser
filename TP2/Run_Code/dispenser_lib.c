@@ -559,7 +559,7 @@ void feed_til_fed(char stock[9]) {
     while (!IR1_val || IR2_val) {
         // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
-        if (((gpioTick() - start) > 3500000) && !err1) {
+        if (((gpioTick() - start) > 5000000) && !err1) {
             printf("ERR1: Mask jammed at feed mechanism\n");
             update_disp("Err1");
             err1 = 1;
@@ -576,7 +576,6 @@ void feed_til_fed(char stock[9]) {
         printf("ERR1 cleared: \n");
         update_disp(stock);        
     }
-    gpioWrite(RollMot, 0); // Turn off feed motor
 }
 
 /**

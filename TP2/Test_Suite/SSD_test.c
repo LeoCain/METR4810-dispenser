@@ -25,6 +25,5 @@ int main() {
     pthread_mutex_unlock(&lock);
     sleep(3);
     SSDon = 0;
-    
-    gpioTerminate();
+    safe_terminate(1);
 }

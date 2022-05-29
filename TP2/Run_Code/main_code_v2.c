@@ -68,7 +68,7 @@ int dispenser(void){
     /* Begin state machine */
     printf("Waiting for mask request...\n");
     // INPUTS = {HAND, IR1, IR2, DOOR}
-    int INPUTS[] = {gpioRead(HAND), presence_detect(IR1), presence_detect(IR2), 0};
+    int INPUTS[] = {presence_detect(HAND), presence_detect(IR1), presence_detect(IR2), 0};
     while(running2){
         // printf("find_state = %d\n", find_state(INPUTS));
         int current_state = find_state(INPUTS);
@@ -114,9 +114,11 @@ int dispenser(void){
                 /*** Mask feed process ***/
                 printf("ST4: Feed_Mask... ");
                 gpioWrite(RollMot, 1); // Start spinning rollers
+                gpioDelay(2000000);
                 // Continue spinning rollers until IR1 is unblocked
                 // -> IR1 unblocked when mask positioned for taking
                 feed_til_fed(stock);
+                gpioWrite(RollMot, 0); // Turn off feed motor
                 /** If we reach this stage, the mask is fed out the door,
                  * ready for collection */
                 printf("Mask fed\n");
@@ -165,7 +167,7 @@ int dispenser(void){
                 printf("Waiting for mask request...\n");
                 break;
         }
-        INPUTS[0] = gpioRead(HAND);
+        INPUTS[0] = presence_detect(HAND);
         INPUTS[1] = presence_detect(IR1);
         INPUTS[2] = presence_detect(IR2);
     }
