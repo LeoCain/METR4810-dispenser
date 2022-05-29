@@ -1,6 +1,6 @@
 /*
 Test code for spinning an MG-90 (Metal-gear SG-90)
-should spin to max CCW, middle, max CW
+should spin to max CCW, max CW
 */
 #include "../Headers/pinout.h"
 #include "../Headers/Dispenser_lib.h"
@@ -8,6 +8,8 @@ should spin to max CCW, middle, max CW
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
+
 void old_design(){
     gpioServo((unsigned) 12, (unsigned) 1000); // Move servo to safe position anti-clockwise.
     sleep(1);
@@ -18,10 +20,10 @@ void old_design(){
 }
 
 int main(){
-    gpioInitialise();
-    gpioSetMode(Doorservo, PI_OUTPUT); // set Doorservo pin as output
-    int i=0;
-    while(i<10){
+    setup();
+    signal(SIGINT, safe_terminate);
+
+    while(running2){
         gpioServo(Doorservo, CLOSE);
         sleep(2);
         open_door();
@@ -32,7 +34,6 @@ int main(){
         close_door();
         printf("close\n");
         sleep(1);
-        i++;
     }
 
     gpioTerminate();

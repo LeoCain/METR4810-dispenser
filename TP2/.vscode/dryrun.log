@@ -4,12 +4,12 @@ gcc -Wall -pthread -o RunCodeExec/main2 Run_Code/main_code_v2.c Run_Code/dispens
 gcc -Wall -pthread -o IP_Display Run_Code/IP_Display.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/detect_test Test_Suite/detect_test.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/In_IRtest Test_Suite/In_IRtest.c Run_Code/dispenser_lib.c -lpigpio -lrt
-gcc -Wall -pthread -o TestSuiteExec/roll_test Test_Suite/roll_test.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/roll_test Test_Suite/roll_test.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/Servo_test Test_Suite/Servo_test.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/SevSegtest Test_Suite/SSD_test.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/stepp_test Test_Suite/stepper_test.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/detach Test_Suite/detach_stepp.c Run_Code/dispenser_lib.c -lpigpio -lrt
-gcc -Wall -pthread -o TestSuiteExec/LEDtest Test_Suite/LEDtest.c -lpigpio -lrt
+gcc -Wall -pthread -o TestSuiteExec/LEDtest Test_Suite/LEDtest.c Run_Code/dispenser_lib.c -lpigpio -lrt
 gcc -Wall -pthread -o TestSuiteExec/ALLSENS_debug Test_Suite/ALLSENS_debug.c Run_Code/dispenser_lib.c -lpigpio -lrt 
 make: Leaving directory '/home/xspinella/METR4810-dispenser2/TP2'
  

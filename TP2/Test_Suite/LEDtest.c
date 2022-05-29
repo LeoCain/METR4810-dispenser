@@ -2,19 +2,22 @@
 Test code for blinking an LED
 */
 #include "../Headers/pinout.h"
+#include "../Headers/Dispenser_lib.h"
+#include "../Headers/Parameters.h"
 #include <pigpio.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>     
 
 int main(void) {
-    gpioInitialise(); // initialise pigpio
-    gpioSetMode(IR1, PI_OUTPUT); // set LED pin as an output
+    setup();
+    signal(SIGINT, safe_terminate);
     int i = 0;
-    while (i < 100) {
-        gpioWrite(IR1, 0); // turn on LED
-        sleep(5); // wait 1 second
-        gpioWrite(IR1, 0);
-        sleep(5); // wait 1 second
+    while (running2) {
+        gpioWrite(LEDs, 1); // turn on LED
+        sleep(1); // wait 1 second
+        gpioWrite(LEDs, 0);
+        sleep(1); // wait 1 second
         i++;
     }
     gpioTerminate();

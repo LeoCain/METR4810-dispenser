@@ -317,14 +317,14 @@ void *SS_print2(void* _) {
  */
 int presence_detect(int sensor_pin){
     float tot = 0;
-    int sample = 50;
+    float sample = 100;
     float avg;
     for (int i=0; i<sample; i++) {
         tot += gpioRead(sensor_pin);
     }
     avg = tot/sample;
 
-    if (avg == 1 && avg == gpioRead(sensor_pin)){
+    if (avg >= 0.5){
         return 1;
     } else{
         return 0;
@@ -422,7 +422,7 @@ void vibe_til_drop(char stock[8]){
     int count = 0;
     while (presence_detect(IR1) || (count % 2)) {
         count++;
-        vibrate2();
+        if (err0) vibrate2();
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 2000000) && !err0) {
             printf("ERR0: Mask jammed in magazine.\n");
@@ -431,7 +431,7 @@ void vibe_til_drop(char stock[8]){
         }
     }
     if (err0) {
-        printf("ERR0 cleared: Mask dropped.\n");
+        printf("ERR0 cleared: ");
         update_disp(stock);
     }
 }
@@ -477,7 +477,16 @@ int find_state(int* INPUTS){
             ST4 += 1;
             ST5 += 1;
             ST6 += 1;
-        } else{
+        } else if (i == 2){
+            // the third digit doesn't matter for ST4
+            ST1 += (ST_1[i] == INPUTS[i]);
+            ST2 += (ST_2[i] == INPUTS[i]);
+            ST3 += (ST_3[i] == INPUTS[i]);
+            ST4 += 1;
+            ST5 += (ST_5[i] == INPUTS[i]);
+            ST6 += (ST_6[i] == INPUTS[i]);
+        }
+        else{
             ST1 += (ST_1[i] == INPUTS[i]);
             ST2 += (ST_2[i] == INPUTS[i]);
             ST3 += (ST_3[i] == INPUTS[i]);
@@ -498,14 +507,14 @@ int find_state(int* INPUTS){
         }
     }
     
-    // printf("INPUTS: [");
-    //     for (int i = 0; i < 4; i++){
-    //         printf(" %d", INPUTS[i]);
-    //     }
-    //     printf(" ], ");
+    printf("INPUTS: [");
+        for (int i = 0; i < 4; i++){
+            printf(" %d", INPUTS[i]);
+        }
+        printf(" ]\n ");
 
     if (max != 4){
-        printf("Error, impossible truth: [");
+        printf("Undefined state: [");
         for (int i = 0; i < 4; i++){
             printf(" %d", INPUTS[i]);
         }
@@ -534,14 +543,14 @@ void feed_til_fed(char stock[9]) {
         // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 3500000) && !err1) {
-            printf("ERR1: Mask jammed at feed mechanism");
+            printf("ERR1: Mask jammed at feed mechanism\n");
             update_disp("Err1");
             err1 = 1;
         }
     //     printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
     }
     if (err1) {
-        printf("ERR1 cleared: Mask fed.\n");
+        printf("ERR1 cleared: \n");
         update_disp(stock);        
     }
     gpioWrite(RollMot, 0); // Turn off feed motor
@@ -564,7 +573,7 @@ void wait_for_take(char stock[9]){
         }
     }
     if (err2) {
-        printf("ERR2 cleared: Mask taken.\n");
+        printf("ERR2 cleared: \n");
         update_disp(stock);
     }
 }
@@ -590,7 +599,7 @@ int restock_or_quit(char stock[9]){
         } else {
             //detach and home:
             detach_stepper();
-            // home_stepper();
+            home_stepper();
             valid_input = 1;
         }
     }
@@ -616,6 +625,8 @@ void safe_terminate(int dummy) {
     running2 = 0;
     // ensure SSD is off
     SSDon = 0;
+    // turn off LEDs
+    gpioWrite(LEDs, 0);
     // ensure motors are off
     gpioWrite(RollMot, 0);
 
@@ -655,6 +666,86 @@ void detach_stepper(void) {
     getchar();
     gpioWrite(STEP_SLP, 1); // Reattach stepper
     printf("Stepper power reattached\n");
+}
+
+/**
+ * Sets pin modes, initial pin states/positions,
+ * and initialises important variables for the main code
+ */
+void main_setup(void){
+    gpioCfgSetInternals(1<<10);
+    gpioInitialise();
+
+    deactivate_segments();
+    gpioSetMode(RollMot, PI_OUTPUT);
+    gpioSetMode(STEP_PIN, PI_OUTPUT);
+    gpioSetMode(DIR_PIN, PI_OUTPUT);
+    gpioSetMode(IR1, PI_INPUT);
+    gpioSetMode(IR2, PI_INPUT);
+    gpioSetMode(HAND, PI_INPUT);
+    gpioSetMode(Doorservo, PI_OUTPUT);
+    gpioSetMode(LEDs, PI_OUTPUT);
+    gpioSetMode(STEP_SLP, PI_OUTPUT);
+    gpioSetMode(HOME_RD, PI_INPUT);
+
+    // set initial state of items
+    gpioWrite(RollMot, 0);
+    gpioWrite(DIR_PIN, TURN_DIRECTION);
+    gpioWrite(STEP_SLP, 1);
+    gpioWrite(LEDs, 0);
+    
+    // change this to the close position
+    gpioServo(Doorservo, CLOSE);
+    sleep(1);
+    open_door();
+    close_door();
+
+    // Initialise multithreading
+    SSDon = 0;
+    pthread_mutex_init(&lock, NULL);
+    
+    // initialise stepper vars
+    tick = 0;
+	step_to_turn = (unsigned)(TOTAL_STEP / SEGMENTS * 2);
+	step_delay_us = STEP_DELAY_MS * 1000;
+	vibrate_delay_us = VIBRATE_DELAY_MS * 1000;
+}
+
+/**
+ * Sets pin modes, initial pin states/positions,
+ * and initialises important variables for the test code
+ */
+void setup(void){
+    gpioCfgSetInternals(1<<10);
+    gpioInitialise();
+
+    deactivate_segments();
+    gpioSetMode(RollMot, PI_OUTPUT);
+    gpioSetMode(STEP_PIN, PI_OUTPUT);
+    gpioSetMode(DIR_PIN, PI_OUTPUT);
+    gpioSetMode(IR1, PI_INPUT);
+    gpioSetMode(IR2, PI_INPUT);
+    gpioSetMode(HAND, PI_INPUT);
+    gpioSetMode(Doorservo, PI_OUTPUT);
+    gpioSetMode(LEDs, PI_OUTPUT);
+    gpioSetMode(STEP_SLP, PI_OUTPUT);
+    gpioSetMode(HOME_RD, PI_INPUT);
+
+    // set initial state of items
+    gpioWrite(RollMot, 0);
+    gpioWrite(DIR_PIN, TURN_DIRECTION);
+    gpioWrite(STEP_SLP, 1);
+    gpioWrite(LEDs, 0);
+
+    // Initialise multithreading
+    SSDon = 0;
+    pthread_mutex_init(&lock, NULL);
+    
+    // initialise stepper vars
+    tick = 0;
+	step_to_turn = (unsigned)(TOTAL_STEP / SEGMENTS * 2);
+	step_delay_us = STEP_DELAY_MS * 1000;
+	vibrate_delay_us = VIBRATE_DELAY_MS * 1000;
 }
 
 /**

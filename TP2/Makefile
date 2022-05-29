@@ -25,7 +25,7 @@ IR: Test_Suite/In_IRtest.c Run_Code/dispenser_lib.c
 # mthreading: Test_Suite/multithread_test.c
 # 	gcc -Wall -pthread -o TestSuiteExec/mt_test $^ -lpigpio -lrt
 # roller motor test code:
-rolltest: Test_Suite/roll_test.c
+rolltest: Test_Suite/roll_test.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/roll_test $^ -lpigpio -lrt
 # door Servo test code:
 doorservo: Test_Suite/Servo_test.c Run_Code/dispenser_lib.c
@@ -40,7 +40,7 @@ stepp: Test_Suite/stepper_test.c Run_Code/dispenser_lib.c
 slp_stepp: Test_Suite/detach_stepp.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/detach $^ -lpigpio -lrt
 # LED test code:
-LED: Test_Suite/LEDtest.c
+LED: Test_Suite/LEDtest.c Run_Code/dispenser_lib.c
 	gcc -Wall -pthread -o TestSuiteExec/LEDtest $^ -lpigpio -lrt
 # debugging of IR sensors
 ALL_SENSOR_debug: Test_Suite/ALLSENS_debug.c Run_Code/dispenser_lib.c
