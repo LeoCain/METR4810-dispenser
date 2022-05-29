@@ -12,9 +12,9 @@ int main(void) {
     int i = 0;
     while (i < 100) {
         gpioWrite(IR1, 0); // turn on LED
-        sleep(5); // wait 1 second
+        sleep(1); // wait 1 second
         gpioWrite(IR1, 0);
-        sleep(5); // wait 1 second
+        sleep(1); // wait 1 second
         i++;
     }
     gpioTerminate();
