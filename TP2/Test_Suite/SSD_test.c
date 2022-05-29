@@ -6,12 +6,14 @@ Test code for the 5461BS Seven Seg Display.
 #include "../Headers/Parameters.h"
 #include <pigpio.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 #include <string.h>
 
 int main() {
-    gpioInitialise();
+    setup();
+    signal(SIGINT, safe_terminate);
+
     pthread_mutex_lock(&lock);
     strncpy(SSD_disp, "4810", 9);
     pthread_mutex_unlock(&lock);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pigpio.h>
 #include <unistd.h>
+#include <signal.h>
 #include "../Headers/Dispenser_lib.h"
 #include "../Headers/Parameters.h"
 #include "../Headers/pinout.h"
@@ -44,10 +45,9 @@ void init(void)
 	vibrate_delay_us = VIBRATE_DELAY_MS * 1000;
 }
 
-int main(void)
-{
-	gpioInitialise();
-	init();
+int main(void) {
+	setup();
+	signal(SIGINT, safe_terminate);
 	// turn();
 	//turn();
 	//turn();

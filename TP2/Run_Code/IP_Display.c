@@ -67,7 +67,7 @@ void display_IP(char address[]){
     
 }
 
-void setup(){
+void setup2(){
     // num[0] = "0000";
     gpioInitialise();
     SSDon = 0;
@@ -75,7 +75,7 @@ void setup(){
 }
 
 int main(){
-    setup();
+    setup2();
     char* IP = get_IP();
     printf("%s IP Address: %s\n", array, IP);
 

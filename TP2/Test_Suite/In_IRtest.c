@@ -9,29 +9,26 @@ Test code for reading binary input from IR sensor.
 #include <unistd.h>
 #include <signal.h>
 
-static volatile int fuck = 1;
+static volatile int ree = 1;
 
-void safe_terminate_IR(int dummy) {
-    fuck = 0;
-    // gpioTerminate();
-    gpioWrite(LEDs, 0);
-    printf("pigpio terminated\n");
-    _Exit(1);
-}
+// void safe_terminate_IR(int dummy) {
+//     ree = 0;
+//     // gpioTerminate();
+//     gpioWrite(LEDs, 0);
+//     printf("pigpio terminated\n");
+//     _Exit(1);
+// }
 
 // Test code for displaying readings from IR transistor.
 int main(){
-    signal(SIGINT, safe_terminate_IR);
-
-    gpioInitialise();   // initialise pigpio
-    gpioSetMode(IR1, PI_INPUT); // set IR transistor pin as input
-    gpioSetMode(IR2, PI_INPUT);
-    gpioSetMode(LEDs, PI_OUTPUT);
+    setup();
+    signal(SIGINT, safe_terminate);
     gpioWrite(LEDs, 1);
+
     int IR1_val;
     int IR2_val;
     int i = 0;
-    while (1){
+    while (running2){
         IR1_val = presence_detect(IR1);
         IR2_val = presence_detect(IR2);
         printf("IR1: %d, ", IR1_val);

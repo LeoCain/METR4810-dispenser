@@ -44,6 +44,9 @@ void wait_for_take(char stock[9]);
 int restock_or_quit(char stock[8]);
 void safe_terminate(int dummy);
 void home_stepper(void);
+void main_setup(void);
+void setup(void);
+
 
 /*** Global variables ***/
 // multithreading
