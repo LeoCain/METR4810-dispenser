@@ -12,6 +12,9 @@ Dispensor source code */
 /* IR break sensors */
 #define LED_BRIGHTNESS      220
 
+/* roller motor */
+#define FEED_DELAY          3000000
+
 /* Stepper */
 #define TOTAL_STEP		    200
 #define STEP_DELAY_MS		40

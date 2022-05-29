@@ -60,6 +60,7 @@ int main(void) {
 int dispenser(void){
     /* Request mask stock */
     char stock[9];
+    int feed = 0;
     printf("Please enter the stock of the dispenser: ");
     scanf("%s", stock);
     update_disp(stock);
@@ -86,6 +87,7 @@ int dispenser(void){
             case (DROP_MASK):
                 /*** Dropping mask process ***/
                 printf("ST2: Dropping_Mask... ");
+                fflush(stdout);
 
                 //turn on DISPENSE/IR LEDs
                 gpioPWM(LEDs, LED_BRIGHTNESS);
@@ -105,23 +107,36 @@ int dispenser(void){
             case (OPEN_DOOR):
                 /*** Open door process ***/
                 printf("ST3: Open_Door... ");
+                fflush(stdout);
                 open_door();
                 INPUTS[3] = 1; // sets door_open flag
                 printf("Door opened\n");
+                feed = 1;
                 break;
 
             case (FEED_MASK):
                 /*** Mask feed process ***/
-                printf("ST4: Feed_Mask... ");
-                gpioWrite(RollMot, 1); // Start spinning rollers
-                gpioDelay(2000000);
-                // Continue spinning rollers until IR1 is unblocked
-                // -> IR1 unblocked when mask positioned for taking
-                feed_til_fed(stock);
-                gpioWrite(RollMot, 0); // Turn off feed motor
-                /** If we reach this stage, the mask is fed out the door,
-                 * ready for collection */
-                printf("Mask fed\n");
+                if (feed) {
+                    printf("ST4: Feed_Mask... ");
+                    fflush(stdout);
+                    int rolltime = gpioTick();
+                    gpioWrite(RollMot, 1); // Start spinning rollers
+                    // Continue spinning rollers until IR1 is unblocked
+                    // -> IR1 unblocked when mask positioned for taking
+                    feed_til_fed(stock);
+            
+                    int elapsed = gpioTick() - rolltime;
+                    if (elapsed < FEED_DELAY) {
+                        gpioDelay(FEED_DELAY- elapsed);
+                    }
+
+                    gpioWrite(RollMot, 0); // Turn off feed motor
+                    /** If we reach this stage, the mask is fed out the door,
+                     * ready for collection */
+                    printf("Mask fed\n");
+                    feed = 0;
+
+                }
                 break;
                 
             case (TAKE_MASK):
@@ -143,7 +158,7 @@ int dispenser(void){
                 snprintf(stock, 9, "%d", new_stock);
 
                 // wait a moment, close door, update door state, turn off green LED
-                gpioDelay(1500000);
+                gpioDelay(1000000);
                 close_door();
                 INPUTS[3] = 0;
                 gpioWrite(LEDs, 0);
