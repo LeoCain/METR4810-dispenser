@@ -447,7 +447,7 @@ long unsigned int run_thread(int mode, char num[]){
     } else if (mode == 1) {
         pthread_t thread_id;
         pthread_create(&thread_id, NULL, SS_print2, NULL);
-        pthread_detach(thread_id); 
+        // pthread_detach(thread_id); 
         return thread_id;
     } else {
         printf("invalid mode\n");
@@ -533,7 +533,7 @@ void feed_til_fed(char stock[9]) {
     while (!presence_detect(IR1) || presence_detect(IR2)) {
         // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
-        if (((gpioTick() - start) > 2500000) && !err1) {
+        if (((gpioTick() - start) > 3500000) && !err1) {
             printf("ERR1: Mask jammed at feed mechanism");
             update_disp("Err1");
             err1 = 1;
@@ -590,7 +590,7 @@ int restock_or_quit(char stock[9]){
         } else {
             //detach and home:
             detach_stepper();
-            home_stepper();
+            // home_stepper();
             valid_input = 1;
         }
     }
@@ -616,6 +616,11 @@ void safe_terminate(int dummy) {
     running2 = 0;
     // ensure SSD is off
     SSDon = 0;
+    // ensure motors are off
+    gpioWrite(RollMot, 0);
+
+    pthread_join(t_id_SSD, NULL);
+    printf("Threads joined\n");
 
     pthread_mutex_destroy(&lock);
     printf("mutex destroyed\n");
@@ -623,7 +628,7 @@ void safe_terminate(int dummy) {
     gpioTerminate();
     printf("pigpio terminated\n");
     //exit
-    _Exit(1);
+    _Exit(0);
 }
 
 /* Actuates stepper to the home position */ 

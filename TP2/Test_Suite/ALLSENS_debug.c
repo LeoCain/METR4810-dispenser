@@ -19,7 +19,7 @@ void setup(){
     gpioSetMode(DIR_PIN, PI_OUTPUT);
     gpioSetMode(IR1, PI_INPUT);
     gpioSetMode(IR2, PI_INPUT);
-    gpioSetMode(HAND, PI_INPUT);
+    gpioSetMode(HAND, PI_INPUT); 
     gpioSetMode(Doorservo, PI_OUTPUT);
     gpioSetMode(LEDs, PI_OUTPUT);
     gpioSetMode(STEP_SLP, PI_OUTPUT);
@@ -32,10 +32,10 @@ void setup(){
     gpioWrite(LEDs, 1);
     
     // change this to the close position
-    gpioServo(Doorservo, CLOSE);
-    sleep(1);
-    open_door();
-    close_door();
+    // gpioServo(Doorservo, CLOSE);
+    // sleep(1);
+    // open_door();
+    // close_door();
 
     // Initialise multithreading
     SSDon = 0;
@@ -52,7 +52,7 @@ int main(void) {
     setup();
     signal(SIGINT, safe_terminate);
     gpioWrite(STEP_SLP, 1);
-    home_stepper();
+    // home_stepper();
     while (running2) {
         printf("IR1: %d, IR2 %d, HAND: %d, HOME: %d\n", presence_detect(IR1), presence_detect(IR2), presence_detect(HAND), gpioRead(HOME_RD));
     }

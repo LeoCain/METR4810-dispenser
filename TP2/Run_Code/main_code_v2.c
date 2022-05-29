@@ -19,7 +19,6 @@
  * 12: fix display update -- DONE
  * 13: update dual IR branch --DONE
  * 14: make SSD multithreading less shit -- DONE
- * 16: home -> detach shit -- CHECK
  * 17: fix vibration slip
  * 18: auto-rehome function (?)
  * 19: detach -> home when restocking -- CHECK
@@ -34,6 +33,7 @@
  * and initialises important variables
  */
 void setup(){
+    gpioCfgSetInternals(1<<10);
     gpioInitialise();
 
     deactivate_segments();

@@ -26,8 +26,8 @@ Dispensor source code */
 
 #define MAX 2500 
 #define MIN 500
-#define OPEN 1000   // Value of pwm for servo OPEN position
-#define CLOSE 1800 // Value of pwm for servo CLOSE position
+#define OPEN 950   // Value of pwm for servo OPEN position
+#define CLOSE 2100 // Value of pwm for servo CLOSE position
 
 // initialise global vars
 int SSDon;
