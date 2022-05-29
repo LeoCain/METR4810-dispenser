@@ -125,6 +125,7 @@ int dispenser(void){
             case (TAKE_MASK):
                 /*** Mask take process ***/
                 printf("ST5: Take_Mask... ");
+                fflush(stdout);
                 // Wait for mask to be taken. if not taken, 
                 // Err2 is displayed; mask jammed at door
                 wait_for_take(stock);

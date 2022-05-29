@@ -720,8 +720,8 @@ void main_setup(void){
     // change this to the close position
     gpioServo(Doorservo, CLOSE);
     sleep(1);
-    open_door();
-    close_door();
+    // open_door();
+    // close_door();
 
     // Initialise multithreading
     SSDon = 0;
