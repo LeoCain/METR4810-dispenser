@@ -10,7 +10,7 @@ Dispensor source code */
 #define hand_val            1  //value of HAND sensor when hand is detected
 
 /* IR break sensors */
-#define LED_BRIGHTNESS      250
+#define LED_BRIGHTNESS      245
 
 /* Stepper */
 #define TOTAL_STEP		    200

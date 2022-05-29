@@ -622,7 +622,7 @@ int restock_or_quit(char stock[9]){
         } else {
             //detach and home:
             detach_stepper();
-            home_stepper();
+            // home_stepper();
             valid_input = 1;
         }
     }
