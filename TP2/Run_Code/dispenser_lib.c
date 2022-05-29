@@ -317,16 +317,31 @@ void *SS_print2(void* _) {
  */
 int presence_detect(int sensor_pin){
     float tot = 0;
-    float sample = 100;
+    float sample = 50;
     float avg;
-    for (int i=0; i<sample; i++) {
-        tot += gpioRead(sensor_pin);
-    }
-    avg = tot/sample;
+    float hist_avg = 0;
+    int j = 1;
+    while (j <= 4) {
+        tot = 0;
+        avg = 0;
+        for (int i=0; i<sample; i++) {
+            tot += gpioRead(sensor_pin);
+        }
+        avg = tot/sample;
 
-    if (avg >= 0.5){
+        if (avg >= 0.95) {
+            return 1;
+        } else if (avg <=0.05) {
+            return 0;
+        } else {
+            hist_avg += avg; 
+        }
+        j++;
+    }
+    hist_avg = hist_avg/j;
+    if (hist_avg >= 0.5) {
         return 1;
-    } else{
+    } else {
         return 0;
     }
 }

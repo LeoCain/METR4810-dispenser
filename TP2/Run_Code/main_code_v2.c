@@ -68,7 +68,7 @@ int dispenser(void){
     /* Begin state machine */
     printf("Waiting for mask request...\n");
     // INPUTS = {HAND, IR1, IR2, DOOR}
-    int INPUTS[] = {presence_detect(HAND), presence_detect(IR1), presence_detect(IR2), 0};
+    int INPUTS[] = {gpioRead(HAND), presence_detect(IR1), presence_detect(IR2), 0};
     while(running2){
         // printf("find_state = %d\n", find_state(INPUTS));
         int current_state = find_state(INPUTS);
@@ -163,7 +163,7 @@ int dispenser(void){
                 printf("Waiting for mask request...\n");
                 break;
         }
-        INPUTS[0] = presence_detect(HAND);
+        INPUTS[0] = gpioRead(HAND);
         INPUTS[1] = presence_detect(IR1);
         INPUTS[2] = presence_detect(IR2);
     }
