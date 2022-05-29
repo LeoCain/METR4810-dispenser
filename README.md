@@ -32,7 +32,7 @@ password: xspinella
 
 ### Configuration:
 ```linux
-cd METR4810-dispenser/TP2  # Navigate to the TP2 directory:
+cd METR4810-dispenser2/TP2  # Navigate to the TP2 directory:
 make  # Ensure all the executables are compiled up-to-date:
 sudo ./RunCodeExec/main2  # Begin the program:
 ```
@@ -80,6 +80,20 @@ If you choose to restock:
 3. Press enter.
 4. Wait for the stepper to home.
 5. When the remote station displays "Waiting for mask request..." normal function has resumed.
+
+### Using the Test Suite:
+in the METR4810-dispenser2/TP2 directory:
+```linux
+sudo ./TestSuiteExec/ALLSENS_debug  #Supplies readings for both IR break sensors, the HAND sensor, and the HOME microswitch.
+sudo ./TestSuiteExec/detatch        #Detaches power from the stepper motor, so that it can free spin.
+sudo ./TestSuiteExec/detect_test    #Displays zero when nothing is detected by HAND sensor, terminates when detects something.
+sudo ./TestSuiteExec/In_IRtest      #Displays the readings for the IR1 and IR2 break sensors.
+sudo ./TestSuiteExec/LEDtest        #Blinks the IRLEDs and GREENLED.
+sudo ./TestSuiteExec/roll_test      #Turns on the roller motor.
+sudo ./TestSuiteExec/Servo_test     #Opens and Closes the door servo.
+sudo ./TestSuiteExec/SevSegtest     #Displays "4810" then "Err0" on the seven segment display.
+sudo ./TestSuiteExec/stepp_test     #Rotates the stepper, then vibrates it.
+```
 
 ## Overview of File Structure:
 METR4810-dispenser: Contains Draw.io logic flow diagrams, and the TP2 project directory.
