@@ -91,7 +91,7 @@ int dispenser(void){
                 gpioPWM(LEDs, LED_BRIGHTNESS);
                 // gpioWrite(LEDs, 1);
 
-                gpioWrite(RollMot, 1); // Start spinning rollers
+                // gpioWrite(RollMot, 1); // Start spinning rollers
                 turn(); // Rotate to next mask index:
 
                 // Vibrate magazine until mask drops
@@ -113,6 +113,7 @@ int dispenser(void){
             case (FEED_MASK):
                 /*** Mask feed process ***/
                 printf("ST4: Feed_Mask... ");
+                gpioWrite(RollMot, 1); // Start spinning rollers
                 // Continue spinning rollers until IR1 is unblocked
                 // -> IR1 unblocked when mask positioned for taking
                 feed_til_fed(stock);

@@ -317,7 +317,7 @@ void *SS_print2(void* _) {
  */
 int presence_detect(int sensor_pin){
     float tot = 0;
-    float sample = 50;
+    float sample = 75;
     float avg;
     float hist_avg = 0;
     int j = 1;
@@ -329,9 +329,9 @@ int presence_detect(int sensor_pin){
         }
         avg = tot/sample;
 
-        if (avg >= 0.95) {
+        if (avg >= 0.98) {
             return 1;
-        } else if (avg <=0.05) {
+        } else if (avg <=0.02) {
             return 0;
         } else {
             hist_avg += avg; 
@@ -522,11 +522,11 @@ int find_state(int* INPUTS){
         }
     }
     
-    printf("INPUTS: [");
-        for (int i = 0; i < 4; i++){
-            printf(" %d", INPUTS[i]);
-        }
-        printf(" ]\n ");
+    // printf("INPUTS: [");
+    //     for (int i = 0; i < 4; i++){
+    //         printf(" %d", INPUTS[i]);
+    //     }
+    //     printf(" ]\n ");
 
     if (max != 4){
         printf("Undefined state: [");
@@ -552,9 +552,11 @@ int find_state(int* INPUTS){
 void feed_til_fed(char stock[9]) {
     // gpioWrite(RollMot, 1);  // Switch on feed rollers
     int start = gpioTick(); // Start feed timer
+    int IR1_val = 0;
+    int IR2_val = 1;
 
     int err1 = 0;
-    while (!presence_detect(IR1) || presence_detect(IR2)) {
+    while (!IR1_val || IR2_val) {
         // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 3500000) && !err1) {
@@ -562,6 +564,12 @@ void feed_til_fed(char stock[9]) {
             update_disp("Err1");
             err1 = 1;
         }
+        gpioWrite(RollMot, 0);
+        gpioDelay(200000);
+        IR1_val = presence_detect(IR1);
+        IR2_val = presence_detect(IR2);
+        gpioWrite(RollMot, 1);
+        gpioDelay(100000);
     //     printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
     }
     if (err1) {
