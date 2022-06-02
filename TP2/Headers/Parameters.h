@@ -17,16 +17,17 @@ Dispensor source code */
 
 /* Stepper */
 #define TOTAL_STEP		    200
-#define STEP_DELAY_MS		40
-#define VIBRATE_DELAY_MS	35
+#define STEP_DELAY_MS		45
+#define VIBRATE_DELAY_MS	40
 #define VIBRATE_STEPS		2 // minimum 2
 #define SEGMENTS		    20  // Number of segments in the magazine
+#define FREE_STEPS          15 // maximum 10
 
 
 /* Stepper Demo (for test code)*/
 #define DEMO_TURNS		    5
 #define DEMO_VIBRATE		52  //must be even
-#define TURN_DIRECTION		1
+#define TURN_DIRECTION		0
 
 /* System */
 #define UNDEF_STATE         0

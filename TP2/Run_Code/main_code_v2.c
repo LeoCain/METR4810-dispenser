@@ -61,6 +61,7 @@ int dispenser(void){
     /* Request mask stock */
     char stock[9];
     int feed = 0;
+    int prev_state = 0;
     printf("Please enter the stock of the dispenser: ");
     scanf("%s", stock);
     update_disp(stock);
@@ -78,10 +79,12 @@ int dispenser(void){
             case (UNDEF_STATE):
                 /*** State is not defined ***/
                 update_disp("Err3");
+                prev_state = UNDEF_STATE;
                 break;
 
             case (WAIT):
                 /*** Waiting for mask request ***/
+                prev_state = WAIT;
                 break;
 
             case (DROP_MASK):
@@ -102,6 +105,7 @@ int dispenser(void){
                 printf("Mask dropped\n");
                 // If we reach this stage, the mask is sitting 
                 // on top of rollers, ready to be fed out.
+                prev_state = DROP_MASK;
                 break;
 
             case (OPEN_DOOR):
@@ -112,11 +116,12 @@ int dispenser(void){
                 INPUTS[3] = 1; // sets door_open flag
                 printf("Door opened\n");
                 feed = 1;
+                prev_state = OPEN_DOOR;
                 break;
 
             case (FEED_MASK):
                 /*** Mask feed process ***/
-                if (feed) {
+                if ((prev_state == OPEN_DOOR) || (prev_state == TAKE_MASK)) {
                     printf("ST4: Feed_Mask... ");
                     fflush(stdout);
                     int rolltime = gpioTick();
@@ -126,16 +131,16 @@ int dispenser(void){
                     feed_til_fed(stock);
             
                     int elapsed = gpioTick() - rolltime;
-                    if (elapsed < FEED_DELAY) {
-                        gpioDelay(FEED_DELAY- elapsed);
-                    }
+                    // if (elapsed < FEED_DELAY) {
+                    //     gpioDelay(FEED_DELAY- elapsed);
+                    // }
 
                     gpioWrite(RollMot, 0); // Turn off feed motor
                     /** If we reach this stage, the mask is fed out the door,
                      * ready for collection */
                     printf("Mask fed\n");
                     feed = 0;
-
+                    prev_state = FEED_MASK;
                 }
                 break;
                 
@@ -147,39 +152,43 @@ int dispenser(void){
                 // Err2 is displayed; mask jammed at door
                 wait_for_take(stock);
                 printf("Mask delivered\n");
+                prev_state = TAKE_MASK;
                 break;
 
             case (FINISH):
-                /*** Finish/close/restock process ***/
-                printf("ST6: Cleanup and return... ");
+                if (prev_state == TAKE_MASK){
+                    /*** Finish/close/restock process ***/
+                    printf("ST6: Cleanup and return... ");
 
-                /* Update the remaining stock: */
-                int new_stock = atoi(stock) - 1;
-                snprintf(stock, 9, "%d", new_stock);
+                    /* Update the remaining stock: */
+                    int new_stock = atoi(stock) - 1;
+                    snprintf(stock, 9, "%d", new_stock);
 
-                // wait a moment, close door, update door state, turn off green LED
-                gpioDelay(1000000);
-                close_door();
-                INPUTS[3] = 0;
-                gpioWrite(LEDs, 0);
-                
-                /* Display stock level */
-                printf("New level of stock: %d\n", atoi(stock));
-                update_disp(stock);
+                    // wait a moment, close door, update door state, turn off green LED
+                    gpioDelay(1000000);
+                    close_door();
+                    INPUTS[3] = 0;
+                    gpioWrite(LEDs, 0);
+                    
+                    /* Display stock level */
+                    printf("New level of stock: %d\n", atoi(stock));
+                    update_disp(stock);
 
-                /* Check if stock depleted, if so prompt a refill then update stock */
-                if (atoi(stock) <= 0) {
-                    int reload_stock = restock_or_quit(stock);
-                    if (reload_stock == 0) {
-                        running2 = 0;
-                        return 0; // CHECK THIS
+                    /* Check if stock depleted, if so prompt a refill then update stock */
+                    if (atoi(stock) <= 0) {
+                        int reload_stock = restock_or_quit(stock);
+                        if (reload_stock == 0) {
+                            running2 = 0;
+                            return 0; // CHECK THIS
+                        }
+                        snprintf(stock, 9, "%d", reload_stock);
+                        printf("Dispenser reloaded to a stock of: %d\n", atoi(stock));
                     }
-                    snprintf(stock, 9, "%d", reload_stock);
-                    printf("Dispenser reloaded to a stock of: %d\n", atoi(stock));
+                    update_disp(stock);
+                    gpioDelay(500000);
+                    printf("Waiting for mask request...\n");
+                    prev_state = FINISH;
                 }
-                update_disp(stock);
-                gpioDelay(500000);
-                printf("Waiting for mask request...\n");
                 break;
         }
         INPUTS[0] = presence_detect(HAND);

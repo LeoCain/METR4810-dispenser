@@ -408,10 +408,10 @@ void vibrate2(void) {
 	gpioDelay(step_delay_us);
 	gpioWrite(STEP_PIN, 1);
 	
-	// gpioDelay(step_delay_us);
-	// gpioWrite(STEP_PIN, 0);
-	// gpioDelay(step_delay_us);
-	// gpioWrite(STEP_PIN, 1);
+	gpioDelay(step_delay_us);
+	gpioWrite(STEP_PIN, 0);
+	gpioDelay(step_delay_us);
+	gpioWrite(STEP_PIN, 1);
 	gpioDelay(vibrate_delay_us);
 }
 
@@ -427,6 +427,36 @@ void turn(void) {
 }
 
 /**
+ * Clears a magazine jam where the mask moves down slightly
+ */
+void free_jam(void){
+    // Switch to reverse direction
+    if (TURN_DIRECTION == 0) {
+        gpioWrite(DIR_PIN, 1);
+    } else{
+        gpioWrite(DIR_PIN, 0);
+    }
+	gpioWrite(STEP_PIN, 0);
+	gpioWrite(STEP_PIN, 1);
+    // step back that way
+    for (int i = 0; i < FREE_STEPS; i++) {
+		step();
+        gpioDelay(step_delay_us);
+	}
+
+    gpioDelay(step_delay_us*2);
+
+    //step back the way you came
+    gpioWrite(DIR_PIN, TURN_DIRECTION);
+    gpioWrite(STEP_PIN, 0);
+	gpioWrite(STEP_PIN, 1);
+    for (int i = 0; i < FREE_STEPS; i++) {
+		step();
+        gpioDelay(step_delay_us);
+	}
+}
+
+/**
  * Vibrates until the mask falls down. 
  * if timer expires, error code is displayed, but vibration continues
  */
@@ -435,14 +465,37 @@ void vibe_til_drop(char stock[8]){
     // After half a sec, vibe until mask drops
     int err0 = 0;
     int count = 0;
+    int jam_type;
     while (presence_detect(IR1) || (count % 2)) {
         count++;
         if (err0) vibrate2();
         // If timer expires, display error to ssd and terminal
-        if (((gpioTick() - start) > 2000000) && !err0) {
+        if (((gpioTick() - start) > 2000000) && !err0 && !(count % 2)) {
             printf("ERR0: Mask jammed in magazine.\n");
             update_disp("Err0");
             err0 = 1;
+        }
+        if (((gpioTick() - start) > 3000000) && !(count % 2)) {
+            printf("Enter 0 for full jam, 1 for funnel jam:");
+            scanf("%d", &jam_type);
+            switch (jam_type){
+                case 0:
+                    turn(); // turn to next mask
+                    //update stock for wasted mask
+                    int new_stock = atoi(stock) - 1;
+                    snprintf(stock, 9, "%d", new_stock);
+                    update_disp(stock);
+
+                    printf("Turned to next mask.");
+                    start = gpioTick(); 
+                    break;
+                case 1:
+                    free_jam();
+                    start = gpioTick(); 
+                    break;
+                default:
+                    printf("Invalid input, please try again.");
+            }
         }
     }
     if (err0) {
@@ -586,7 +639,7 @@ void wait_for_take(char stock[9]){
     int start = gpioTick(); // Start take timer
 
     int err2 = 0;
-    while (!gpioRead(IR2)) {
+    while (!gpioRead(IR2) && gpioRead(IR1)) {
         // If timer expires, display error to ssd and terminal
         if (((gpioTick() - start) > 5000000) && !err2) {
             printf("ERR2: Mask not taken or jammed at door.\n");

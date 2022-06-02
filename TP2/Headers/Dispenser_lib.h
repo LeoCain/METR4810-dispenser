@@ -34,6 +34,7 @@ void vibrate2(void);
 void step(void);
 void home_stepper(void);
 void detach_stepper(void);
+void free_jam(void);
 
 
 /*** Functional helper functions ***/
