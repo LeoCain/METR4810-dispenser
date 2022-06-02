@@ -475,26 +475,36 @@ void vibe_til_drop(char stock[8]){
             update_disp("Err0");
             err0 = 1;
         }
-        if (((gpioTick() - start) > 3000000) && !(count % 2)) {
-            printf("Enter 0 for full jam, 1 for funnel jam:");
-            scanf("%d", &jam_type);
-            switch (jam_type){
-                case 0:
-                    turn(); // turn to next mask
-                    //update stock for wasted mask
-                    int new_stock = atoi(stock) - 1;
-                    snprintf(stock, 9, "%d", new_stock);
-                    update_disp(stock);
+        if (((gpioTick() - start) > 4000000) && !(count % 2)) {
+            free_jam();
+            printf("IR1: %d\n", presence_detect(IR1));
+            free_jam();
+            printf("IR1: %d\n", presence_detect(IR1));
+            free_jam();
+            gpioDelay(100000);
+            printf("IR1: %d\n", presence_detect(IR1));
+            
+            if (presence_detect(IR1)){
+                printf("Enter 0 for full jam, 1 for funnel jam:");
+                scanf("%d", &jam_type);
+                switch (jam_type){
+                    case 0:
+                        turn(); // turn to next mask
+                        //update stock for wasted mask
+                        int new_stock = atoi(stock) - 1;
+                        snprintf(stock, 9, "%d", new_stock);
+                        update_disp(stock);
 
-                    printf("Turned to next mask.");
-                    start = gpioTick(); 
-                    break;
-                case 1:
-                    free_jam();
-                    start = gpioTick(); 
-                    break;
-                default:
-                    printf("Invalid input, please try again.");
+                        printf("Turned to next mask.");
+                        start = gpioTick(); 
+                        break;
+                    case 1:
+                        free_jam();
+                        start = gpioTick(); 
+                        break;
+                    default:
+                        printf("Invalid input, please try again.");
+                }
             }
         }
     }
@@ -546,7 +556,7 @@ int find_state(int* INPUTS){
             ST5 += 1;
             ST6 += 1;
         } else if (i == 2){
-            // the third digit doesn't matter for ST4
+            // the third digit doesn't matter for ST4 (feed_mask)
             ST1 += (ST_1[i] == INPUTS[i]);
             ST2 += (ST_2[i] == INPUTS[i]);
             ST3 += (ST_3[i] == INPUTS[i]);
@@ -612,17 +622,22 @@ void feed_til_fed(char stock[9]) {
     while (!IR1_val || IR2_val) {
         // printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
         // If timer expires, display error to ssd and terminal
-        if (((gpioTick() - start) > 5000000) && !err1) {
+        if (((gpioTick() - start) > 6000000) && !err1) {
             printf("ERR1: Mask jammed at feed mechanism\n");
             update_disp("Err1");
             err1 = 1;
         }
-        gpioWrite(RollMot, 0);
-        gpioDelay(200000);
-        IR1_val = presence_detect(IR1);
-        IR2_val = presence_detect(IR2);
-        gpioWrite(RollMot, 1);
-        gpioDelay(100000);
+        if (err1){
+            IR1_val = presence_detect(IR1);
+            IR2_val = presence_detect(IR2);
+        } else{
+            gpioWrite(RollMot, 0);
+            gpioDelay(200000);
+            IR1_val = presence_detect(IR1);
+            IR2_val = presence_detect(IR2);
+            gpioWrite(RollMot, 1);
+            gpioDelay(100000);
+        }
     //     printf("IR1: %d, IR2: %d\n", presence_detect(IR1), presence_detect(IR2));
     }
     if (err1) {
@@ -641,7 +656,7 @@ void wait_for_take(char stock[9]){
     int err2 = 0;
     while (!gpioRead(IR2) && gpioRead(IR1)) {
         // If timer expires, display error to ssd and terminal
-        if (((gpioTick() - start) > 5000000) && !err2) {
+        if (((gpioTick() - start) > 10000000) && !err2) {
             printf("ERR2: Mask not taken or jammed at door.\n");
             update_disp("Err2");
             err2 = 1;
